@@ -244,11 +244,9 @@ function App() {
             } else if (currentView === 'room' && (roomState?.id || sessionStorage.getItem('pokerRoomId')) && currentUserName) {
                 const roomIdToRejoin = roomState?.id || sessionStorage.getItem('pokerRoomId');
                 console.log(`Attempting to re-join room ${roomIdToRejoin} as ${currentUserName} after (re)connect.`);
-                addToast(`Reconnecting to room ${roomIdToRejoin}...`, 'info');
                 socketJoinRoom(roomIdToRejoin, currentUserName, (response) => {
                     if (response.success) {
                         console.log(`Successfully re-joined room ${roomIdToRejoin}. Server state:`, response.room);
-                        addToast(`Successfully re-joined room ${response.room.id}!`, 'success');
                         handleRoomEntry(response.room, currentUserName, response.room.creatorId === (currentSocket ? currentSocket.id : null));
                     } else {
                         console.error(`Failed to re-join room ${roomIdToRejoin}:`, response.message);
@@ -264,7 +262,6 @@ function App() {
                 // If room in URL, username exists, but not in 'room' view (e.g. landed on home, or manually navigated)
                 // Treat this as an explicit join attempt for the room in URL
                 console.log(`App.js: Found room ${roomFromUrl} in URL and user ${currentUserName}. Attempting to join.`);
-                addToast(`Attempting to join room ${roomFromUrl} from URL...`, 'info');
                 socketJoinRoom(roomFromUrl, currentUserName, (response) => {
                     if (response.success) {
                         addToast(`Successfully joined room ${response.room.id} from URL!`, 'success');
@@ -281,13 +278,11 @@ function App() {
 
         } else if (status === 'disconnect') {
             console.warn("App.js: Disconnected from server.");
-            addToast('Disconnected. Attempting to reconnect...', 'warning');
         } else if (status === 'reconnecting') {
             // Text indicator shows "Reconnecting...". No toast needed here as it can be frequent.
             // The 'disconnect' toast ("Disconnected. Attempting to reconnect...") serves as the initial alert.
         } else if (status === 'reconnect') {
             console.log("App.js: Reconnected. New Socket ID:", currentSocket ? currentSocket.id : 'N/A');
-            addToast('Reconnected successfully!', 'success');
              // It's possible event listeners need to be re-attached if the socket instance truly changed
             // and `setupEventListeners` isn't run due to `status === 'connect'` condition not re-triggering.
             // However, `socketService` reuses the same `socket` object on reconnects, so listeners should persist.
@@ -317,7 +312,7 @@ function App() {
 
     // On initial load, try to load username from session storage.
     // Also, handle the URL room check if not connected yet but details are available.
-    if (connectionStatus === 'initial' || (status !== 'connect' && !getSocketInstance()?.connected)) {
+    if (connectionStatus === 'initial') {
         const persistedUserNameFromSession = sessionStorage.getItem('pokerUserName');
         if (persistedUserNameFromSession && !userName) {
             setUserName(persistedUserNameFromSession);
