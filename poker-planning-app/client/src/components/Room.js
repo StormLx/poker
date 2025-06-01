@@ -8,15 +8,17 @@ import {
   submitVote,
   revealVotes,
   resetVoting,
-  toggleSpectatorMode, // New
+  toggleSpectatorMode,
+  getSocketInstance // Add this
 } from '../socketService';
-import socket from '../socketService';
+// import socket from '../socketService'; // Remove this line
 import VotingCard from './VotingCard';
 import StatisticsDisplay from './StatisticsDisplay';
 import QRCodeDisplay from './QRCodeDisplay'; // Import QR Code component
 import './Room.css';
 
 function Room({ roomData, userName, isCreator, isSpectator: currentUserIsSpectatorProp, currentRoomId, addToast }) {
+  const socket = getSocketInstance();
   // roomData structure: { id, creatorId, participants, votingCards, votingScaleConfig, votesRevealed, statistics, creatorLiveVotes, currentGlobalSocketId }
   const [participants, setParticipants] = useState(roomData.participants || []);
   const [currentCreatorId, setCurrentCreatorId] = useState(roomData.creatorId);
@@ -72,10 +74,12 @@ function Room({ roomData, userName, isCreator, isSpectator: currentUserIsSpectat
     onParticipantJoined(handleParticipantJoinedEvent);
     onParticipantLeft(handleParticipantLeftEvent);
     return () => {
-      socket.off('participantJoined', handleParticipantJoinedEvent);
-      socket.off('participantLeft', handleParticipantLeftEvent);
+      if (socket) { // Check if socket instance exists
+        socket.off('participantJoined', handleParticipantJoinedEvent);
+        socket.off('participantLeft', handleParticipantLeftEvent);
+      }
     };
-  }, [currentRoomId]);
+  }, [currentRoomId, socket]); // Added socket to dependency array
 
   const handleCardClick = (value) => {
     if (votesRevealed || isLoadingVote || isCurrentUserSpectator) return; // Spectators cannot vote
@@ -144,7 +148,7 @@ function Room({ roomData, userName, isCreator, isSpectator: currentUserIsSpectat
   };
 
   // Determine if current user (socket.id from roomData.currentGlobalSocketId) has voted
-  const currentUserSocketId = roomData.currentGlobalSocketId || socket.id;
+  const currentUserSocketId = roomData.currentGlobalSocketId || socket?.id;
   const currentUserFromParticipants = participants.find(p => p.id === currentUserSocketId);
   const currentUserHasVoted = currentUserFromParticipants?.hasVoted || false;
   // isCurrentUserSpectator state is now used directly.
@@ -221,7 +225,7 @@ function Room({ roomData, userName, isCreator, isSpectator: currentUserIsSpectat
 
       <ParticipantList
         participants={participants}
-        currentUserId={socket.id}
+        currentUserId={socket?.id}
         creatorId={currentCreatorId}
         votesRevealed={votesRevealed}
         creatorLiveVotes={isCreator ? creatorLiveVotes : null} // Pass live votes only if creator

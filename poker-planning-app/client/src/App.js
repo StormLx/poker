@@ -254,7 +254,7 @@ function App() {
         // then socket.off for specific listeners would be needed here.
         // For now, socketService.js handles re-creating socket or re-attaching its own internal listeners.
     };
-  }, [currentView, roomState?.id, roomState?.userName, userName]); // Dependencies for rejoin logic & listener setup
+  }, [currentView, roomState?.id, roomState?.userName, userName, connectionStatus]); // Added connectionStatus
 
   let statusIndicatorText = `Status: ${connectionStatus}`;
   if (connectionStatus === 'connect' && currentSocketId) statusIndicatorText = `Connected (${currentSocketId.substring(0,6)}...)`; // Shorten ID
