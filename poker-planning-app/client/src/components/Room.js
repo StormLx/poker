@@ -5,19 +5,22 @@ import {
   onParticipantJoined,
   onParticipantLeft,
   updateVotingScale,
-  submitVote, // New
-  revealVotes, // New
-  resetVoting, // New
+  submitVote,
+  revealVotes,
+  resetVoting,
+  toggleSpectatorMode, // New
 } from '../socketService';
-import socket from '../socketService'; // Direct import for current user ID
-import VotingCard from './VotingCard'; // New
-import StatisticsDisplay from './StatisticsDisplay'; // New
+import socket from '../socketService';
+import VotingCard from './VotingCard';
+import StatisticsDisplay from './StatisticsDisplay';
+import QRCodeDisplay from './QRCodeDisplay'; // Import QR Code component
 import './Room.css';
 
-function Room({ roomData, userName, isCreator, currentRoomId, addToast }) { // Added addToast prop
+function Room({ roomData, userName, isCreator, isSpectator: currentUserIsSpectatorProp, currentRoomId, addToast }) {
   // roomData structure: { id, creatorId, participants, votingCards, votingScaleConfig, votesRevealed, statistics, creatorLiveVotes, currentGlobalSocketId }
   const [participants, setParticipants] = useState(roomData.participants || []);
   const [currentCreatorId, setCurrentCreatorId] = useState(roomData.creatorId);
+  const [isCurrentUserSpectator, setIsCurrentUserSpectator] = useState(currentUserIsSpectatorProp);
   const [votingCards, setVotingCards] = useState(roomData.votingCards || []);
   const [votingScaleConfig, setVotingScaleConfig] = useState(roomData.votingScaleConfig || {});
   const [votesRevealed, setVotesRevealed] = useState(roomData.votesRevealed || false);
@@ -30,6 +33,8 @@ function Room({ roomData, userName, isCreator, currentRoomId, addToast }) { // A
   const [isLoadingReveal, setIsLoadingReveal] = useState(false);
   const [isLoadingReset, setIsLoadingReset] = useState(false);
   const [isLoadingScaleUpdate, setIsLoadingScaleUpdate] = useState(false);
+  const [isLoadingSpectatorToggle, setIsLoadingSpectatorToggle] = useState(false);
+  const [showQRCode, setShowQRCode] = useState(false); // State for QR code modal
 
 
   useEffect(() => {
@@ -40,12 +45,13 @@ function Room({ roomData, userName, isCreator, currentRoomId, addToast }) { // A
     setVotesRevealed(roomData.votesRevealed || false);
     setStatistics(roomData.statistics || null);
     setCreatorLiveVotes(roomData.creatorLiveVotes || {});
+    setIsCurrentUserSpectator(currentUserIsSpectatorProp); // Keep local spectator state in sync with prop
 
     // If voting is reset (votes no longer revealed), clear local selected vote
     if (!roomData.votesRevealed) {
       setSelectedVote(null);
     }
-  }, [roomData]);
+  }, [roomData, currentUserIsSpectatorProp]);
 
   useEffect(() => {
     const handleParticipantJoinedEvent = ({ participant, roomId: eventRoomId }) => {
@@ -72,18 +78,15 @@ function Room({ roomData, userName, isCreator, currentRoomId, addToast }) { // A
   }, [currentRoomId]);
 
   const handleCardClick = (value) => {
-    if (votesRevealed || isLoadingVote) return;
+    if (votesRevealed || isLoadingVote || isCurrentUserSpectator) return; // Spectators cannot vote
     setIsLoadingVote(true);
-    // setSelectedVote(value); // Optimistically set, or wait for 'participantVoted' from App.js for self
     submitVote(value, (response) => {
       setIsLoadingVote(false);
       if (response.success) {
         addToast(`Vote '${value}' submitted!`, 'success');
-        setSelectedVote(value); // Confirm selection on successful submit
-        // App.js state will update participant's hasVoted via 'participantVoted' event
+        setSelectedVote(value);
       } else {
         addToast(`Vote failed: ${response.message}`, 'error');
-        // setSelectedVote(null); // Revert if needed, but depends on desired UX
       }
     });
   };
@@ -141,9 +144,24 @@ function Room({ roomData, userName, isCreator, currentRoomId, addToast }) { // A
   };
 
   // Determine if current user (socket.id from roomData.currentGlobalSocketId) has voted
-  const currentUserSocketId = roomData.currentGlobalSocketId || socket.id; // Fallback to direct socket.id if prop not there
-  const currentUserHasVoted = participants.find(p => p.id === currentUserSocketId)?.hasVoted || false;
-  const currentUserIsSpectator = !participants.find(p => p.id === currentUserSocketId); // Example: if not in participant list
+  const currentUserSocketId = roomData.currentGlobalSocketId || socket.id;
+  const currentUserFromParticipants = participants.find(p => p.id === currentUserSocketId);
+  const currentUserHasVoted = currentUserFromParticipants?.hasVoted || false;
+  // isCurrentUserSpectator state is now used directly.
+
+  const handleToggleSpectatorMode = () => {
+    if (isLoadingSpectatorToggle) return;
+    setIsLoadingSpectatorToggle(true);
+    toggleSpectatorMode((response) => {
+      setIsLoadingSpectatorToggle(false);
+      if (response.success) {
+        addToast(`You are now ${response.isSpectator ? 'a spectator' : 'a participant'}.`, 'success');
+        // App.js will receive 'participantUpdated' and update props including isSpectator for this user
+      } else {
+        addToast(`Failed to toggle mode: ${response.message}`, 'error');
+      }
+    });
+  };
 
   // For VotingCard's voteCount and participantNames props
   const getVoteCountsForCards = () => {
@@ -166,9 +184,33 @@ function Room({ roomData, userName, isCreator, currentRoomId, addToast }) { // A
   return (
     <div className="room-container">
       <h2>Room: {currentRoomId}</h2>
-      <p>Welcome, {userName}! {isCreator && <em>(You are the Creator)</em>} {currentUserIsSpectator && <em>(Spectator)</em>}</p>
+      <p>Welcome, {userName}!
+        {isCreator && <em> (Creator)</em>}
+        {isCurrentUserSpectator && <em className="spectator-indicator"> (Spectator)</em>}
+      </p>
 
-      {/* Action messages replaced by toasts */}
+      <div className="room-actions-bar">
+        <button
+          onClick={handleToggleSpectatorMode}
+          disabled={isLoadingSpectatorToggle}
+          className="spectator-toggle-btn room-action-btn"
+        >
+          {isLoadingSpectatorToggle ? 'Updating...' : (isCurrentUserSpectator ? 'Become a Participant' : 'Become a Spectator')}
+        </button>
+        <button onClick={handleCopyLink} className="copy-link-btn room-action-btn">
+          Copy Room Link
+        </button>
+        <button onClick={() => setShowQRCode(true)} className="show-qr-btn room-action-btn">
+          Show QR to Join
+        </button>
+      </div>
+
+      {showQRCode && (
+        <QRCodeDisplay
+          roomLink={`${window.location.origin}${window.location.pathname}?room=${currentRoomId}`}
+          onClose={() => setShowQRCode(false)}
+        />
+      )}
 
       <div className="room-meta-info">
         <p className="voting-progress">
@@ -197,11 +239,12 @@ function Room({ roomData, userName, isCreator, currentRoomId, addToast }) { // A
               voteCount={voteCountsMap[cardValue] || 0}
               participantNames={getParticipantNamesForCardValue(cardValue)}
               onClick={handleCardClick}
-              disabled={votesRevealed || currentUserHasVoted || currentUserIsSpectator || isLoadingVote}
+              disabled={votesRevealed || currentUserHasVoted || isCurrentUserSpectator || isLoadingVote}
             />
           ))}
         </div>
          {votingCards.length === 0 && <p>No voting scale selected or available.</p>}
+         {isCurrentUserSpectator && !votesRevealed && <p className="spectator-message">Spectators cannot vote.</p>}
       </div>
 
       {isCreator && (

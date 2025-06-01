@@ -1,0 +1,90 @@
+# IDE and OS specific
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Build outputs (general, though specific ones are in client/server .gitignores)
+build/
+dist/
+out/
+
+# Test Reports / Coverage
+coverage/
+*.lcov
+
+# Environment files
+.env
+.env.*
+!.env.example
+# (allow .env.example to be checked in)
+
+# Log files
+*.log
+logs/
+
+# NPM / Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# package-lock.json is typically checked in for npm projects.
+# If a sub-project specifically does not want it, it can add it to its own .gitignore.
+
+# Other
+*.pem
+*.key
+*.cer
+*.crt
+# Add any other project-specific ignores here
+# e.g. if using python:
+# __pycache__/
+# *.pyc
+# *.pyo
+# venv/
+# .Python
+# instance/
+# .webassets-cache/
+# .pytest_cache/
+# .ipynb_checkpoints/
+# htmlcov/
+# .hypothesis/
+# .mypy_cache/
+# .dmypy.json
+# .ruff_cache/
+# .nox/
+# .coverage
+# .coverage.*
+# .cache
+# nosetests.xml
+# coverage.xml
+# *.cover
+# *.log
+# .tox/
+# build*/
+# dist*/
+# *.egg-info/
+# .eggs/
+# MANIFEST
+# htmlcov/
+# .cache/
+# .hypothesis/
+# .pytest_cache/
+# *.mo
+# *.pot
+# *.db
+# *.sqlite3
+# local_settings.py
+# Pipfile.lock
+# poetry.lock
+# Pipenv.lock
+# .pdm.lock
+# pdm.lock
+# pyproject.toml.pdm
+# .pdm-build/
+# .pytest_cache/
+# .ruff_cache/
+# .mypy_cache/

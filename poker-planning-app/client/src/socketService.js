@@ -1,6 +1,9 @@
 import io from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:8080'; // Make this configurable later
+// Use REACT_APP_ prefix for Create React App environment variables
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:8080';
+console.log("Socket URL:", SOCKET_URL); // For debugging
+
 let socket = null;
 
 // Emitter for connection status changes
@@ -61,7 +64,10 @@ export const connectSocket = () => {
 
   socket.on('connect_error', (err) => {
     console.error('Connection error with WebSocket server:', err.message);
+    // If it's a one-off error before initial connection, it might lead to reconnect attempts.
+    // If reconnection attempts are exhausted, 'reconnect_failed' will handle the persistent failure state.
     connectionStatusEmitter.emit('connect_error', err.message);
+    // Consider if this should immediately go to 'failed_to_connect' if no retries are configured for initial
   });
 
   socket.on('reconnect_attempt', (attemptNumber) => {
@@ -76,7 +82,7 @@ export const connectSocket = () => {
 
   socket.on('reconnect_failed', () => {
     console.error('Failed to reconnect to the WebSocket server after multiple attempts.');
-    connectionStatusEmitter.emit('reconnect_failed');
+    connectionStatusEmitter.emit('failed_to_connect', 'Reconnect failed'); // Use a more generic status
   });
 
   // Expose the emitter for App.js to subscribe to
@@ -130,7 +136,14 @@ export const onParticipantVotedRealTime = (callback) => setupListener('participa
 export const onVotesRevealed = (callback) => setupListener('votesRevealed', callback);
 export const onVotingReset = (callback) => setupListener('votingReset', callback);
 export const onError = (callback) => setupListener('error', callback);
+export const onParticipantUpdated = (callback) => setupListener('participantUpdated', callback);
 
+
+export const toggleSpectatorMode = (callback) => {
+  if (!socket) return callback({ success: false, message: "Socket not connected."});
+  console.log("Emitting toggleSpectatorMode");
+  socket.emit('toggleSpectatorMode', {}, callback);
+};
 
 export const updateVotingScale = (newScaleConfig, callback) => {
   if (!socket) return callback({ success: false, message: "Socket not connected." });

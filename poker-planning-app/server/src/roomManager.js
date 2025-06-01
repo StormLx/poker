@@ -40,7 +40,7 @@ function createRoom(creatorName, creatorSocketId, votingScaleConfig) {
   rooms[roomId] = {
     id: roomId,
     creatorId: creatorSocketId,
-    participants: [{ id: creatorSocketId, name: creatorName, currentVote: null, hasVoted: false }],
+    participants: [{ id: creatorSocketId, name: creatorName, currentVote: null, hasVoted: false, isSpectator: false }],
     // votes will store { userId: voteValue } - this might be deprecated if storing vote on participant
     votes: {},
     revealed: false,
@@ -63,10 +63,11 @@ function joinRoom(roomId, userName, userSocketId) {
         existingParticipant.name = userName; // Update name if it changed
         if (existingParticipant.currentVote === undefined) existingParticipant.currentVote = null;
         if (existingParticipant.hasVoted === undefined) existingParticipant.hasVoted = false;
+        if (existingParticipant.isSpectator === undefined) existingParticipant.isSpectator = false; // Ensure isSpectator exists
       }
       return { room };
     }
-    room.participants.push({ id: userSocketId, name: userName, currentVote: null, hasVoted: false });
+    room.participants.push({ id: userSocketId, name: userName, currentVote: null, hasVoted: false, isSpectator: false });
     console.log(`User ${userName} (${userSocketId}) joined room ${roomId}`);
     return { room };
   }
@@ -112,6 +113,7 @@ module.exports = {
   submitVote,
   revealVotes,
   resetVoting,
+  toggleSpectatorMode,
   // Will add functions for voting later
 };
 
@@ -224,6 +226,10 @@ function submitVote(roomId, userId, voteValue) {
   const participant = room.participants.find(p => p.id === userId);
   if (!participant) return { error: 'Participant not found.' };
 
+  if (participant.isSpectator) {
+    return { error: 'Spectators cannot vote.' };
+  }
+
   if (room.votesRevealed) return { error: 'Voting has ended for this round. Please reset to vote again.' };
 
   // Check if voteValue is part of the current room's votingCards
@@ -236,4 +242,25 @@ function submitVote(roomId, userId, voteValue) {
   participant.hasVoted = true;
   console.log(`Vote submitted by ${userId} in room ${roomId}: ${voteValue}`);
   return { success: true, participantId: userId, voteValue, room }; // Return room for consistency, or just participant if preferred
+}
+
+function toggleSpectatorMode(roomId, userId) {
+  const room = getRoom(roomId);
+  if (!room) return { error: 'Room not found.' };
+
+  const participant = room.participants.find(p => p.id === userId);
+  if (!participant) return { error: 'Participant not found.' };
+
+  participant.isSpectator = !participant.isSpectator;
+
+  // If user becomes a spectator, clear their vote and hasVoted status
+  if (participant.isSpectator) {
+    participant.currentVote = null;
+    participant.hasVoted = false;
+  }
+  // If votes are already revealed and they toggle spectator mode, their vote remains revealed if they had one.
+  // If voting is active and they stop being a spectator, they can now vote.
+
+  console.log(`User ${participant.name} (${userId}) in room ${roomId} is now ${participant.isSpectator ? 'a spectator' : 'a participant'}.`);
+  return { success: true, participant, room }; // Return room for full state update, participant for targeted update
 }

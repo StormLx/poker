@@ -3,22 +3,43 @@ services:
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile # We will create this Dockerfile
+      dockerfile: Dockerfile # Points to the multi-stage Dockerfile
+      args:
+        # This URL is what the client running in the browser will use to connect to the server.
+        # If docker-compose maps server's port 8080 to host's port 8080, then localhost:8080 is correct.
+        # For production, this would be your actual domain/server IP and port.
+        REACT_APP_SOCKET_URL: http://localhost:8080
     ports:
-      - "3000:3000"
-    volumes:
-      - ./client:/usr/src/app
-      - /usr/src/app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true # Helps with hot-reloading in Docker
-      - WDS_SOCKET_PORT=0 # CRA specific for HMR behind proxy
-    stdin_open: true # For Create React App
-    tty: true # For Create React App
+      - "3000:80" # Map host's port 3000 to Nginx's port 80 in the container
+    # Volumes are generally not used for a production build served by Nginx.
+    # The build context copies files into the image.
+    # Environment variables here are for the Nginx container runtime, not the React build time.
+    # CRA build has already baked in REACT_APP_SOCKET_URL from the 'args' above.
+    # CHOKIDAR_USEPOLLING, WDS_SOCKET_PORT, stdin_open, tty were for React Dev server.
+    # They are not needed for an Nginx setup.
+    # Example for setting Nginx related env vars if needed:
+    # environment:
+    #   - NGINX_HOST=yourdomain.com
   server:
-    build: ./server # Assumes Dockerfile exists in ./server
+    build: ./server
     ports:
-      - "8080:8080"
+      - "8080:8080" # Host:Container
     volumes:
+      # For development, mounting the source code is useful for hot-reloading.
+      # For a production deployment, you'd typically build an image with the code copied in,
+      # and not mount the source code volume to keep the container immutable.
       - ./server:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm run dev
+      - /usr/src/app/node_modules # Exclude node_modules from being overwritten by the host mount in dev
+    # command: npm run dev # Good for development
+    # For production server, command might be "npm start" or directly "node src/server.js"
+    command: npm run start # Assuming you have a "start": "node src/server.js" in server/package.json
+    environment:
+      - PORT=8080 # Server will use this. If not set, defaults to server.js config.
+      - NODE_ENV=production # Set Node environment to production for the server
+      # Add any other server-specific environment variables here
+      # - DATABASE_URL=...
+      # - API_KEY=...
+
+# Optional: Define named volumes if you need persistent data for databases etc.
+# volumes:
+#   db_data:
