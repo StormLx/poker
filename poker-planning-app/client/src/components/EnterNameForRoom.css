@@ -1,0 +1,90 @@
+.enter-name-for-room-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: var(--background-color-light);
+  color: var(--text-color-light);
+  margin: 20px auto;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme .enter-name-for-room-container {
+  background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
+  border-color: #555;
+}
+
+.enter-name-for-room-container h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+.enter-name-for-room-container p {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.enter-name-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#name-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: var(--input-bg-light);
+  color: var(--input-text-light);
+}
+
+.dark-theme #name-input {
+  background-color: var(--input-bg-dark);
+  color: var(--input-text-dark);
+  border-color: #555;
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.9rem;
+  margin-top: -10px; /* Reduce space if error appears */
+  margin-bottom: 5px;
+}
+
+.submit-name-btn {
+  padding: 10px 15px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.submit-name-btn:hover {
+  background-color: var(--primary-color-darker);
+}
+
+.submit-name-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
