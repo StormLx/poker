@@ -1,0 +1,122 @@
+.voting-card-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70px; /* Fixed width */
+  height: 100px; /* Fixed height */
+  border: 2px solid #007bff; /* Primary blue border */
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative; /* For vote count positioning */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  user-select: none; /* Prevent text selection */
+  perspective: 1000px; /* For 3D flip effect */
+}
+
+.voting-card-item .card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  display: flex; /* Ensure content inside inner is also centered */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.voting-card-item.revealed-selected .card-inner,
+.voting-card-item.disabled-revealed .card-inner { /* Apply flip when revealed */
+   /* transform: rotateY(180deg); // This would hide the front, need front/back setup
+      For simplicity, we are not doing a full front/back card for now.
+      Instead, the visual change is handled by background and text color changes.
+      If a true flip is desired, card-front and card-back elements would be needed.
+   */
+}
+
+
+.voting-card-item:hover:not(.disabled-opaque):not(.disabled-revealed) {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border-color: #0056b3; /* Darker blue on hover */
+}
+
+.voting-card-item.selected {
+  background-color: #007bff; /* Primary blue background */
+  color: white;
+  border-color: #0056b3; /* Darker blue for selected */
+  box-shadow: 0 0 10px rgba(0,123,255,0.5); /* Glow effect */
+}
+
+.voting-card-item.disabled-opaque {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #e9ecef;
+  border-color: #ced4da;
+}
+
+.voting-card-item.disabled-revealed {
+  cursor: default; /* Not clickable, but not necessarily "disabled" looking */
+  background-color: #f8f9fa; /* Lighter background for non-selected revealed cards */
+  border-color: #dee2e6;
+  color: #6c757d; /* Muted text color */
+}
+
+.voting-card-item.disabled-revealed.selected,
+.voting-card-item.revealed-selected {
+  /* Special style for the user's own card when revealed if it was selected */
+  background-color: #28a745; /* Green to highlight user's vote after reveal */
+  color: white;
+  border-color: #1e7e34; /* Darker green */
+}
+
+
+.card-value {
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+.vote-count {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  background-color: #dc3545; /* Red for vote count */
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  z-index: 1; /* Ensure vote count is above the value span */
+}
+
+/* If card is selected, vote count might need different styling if visible */
+.voting-card-item.selected .vote-count {
+  background-color: white;
+  color: #007bff; /* Blue text on white bg */
+}
+.voting-card-item.selected .card-value {
+  color: white; /* Ensure value is white on blue bg */
+}
+
+
+.voting-card-item.revealed-selected .vote-count {
+  background-color: white;
+  color: #28a745; /* Green text on white bg */
+}
+.voting-card-item.revealed-selected .card-value {
+  color: white; /* Ensure value is white on green bg */
+}
+
+/* Styling for the value itself if it needs to change color on selection/reveal */
+.voting-card-item.disabled-revealed .card-value {
+  color: #6c757d; /* Muted text for non-selected revealed cards */
+}

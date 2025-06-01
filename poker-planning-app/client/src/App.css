@@ -1,0 +1,172 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f2f5; /* Slightly lighter grey */
+  color: #333;
+  line-height: 1.6; /* Improved readability */
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure App takes at least full viewport height */
+  text-align: center;
+}
+
+.App-header {
+  background-color: #003366; /* Darker, more professional blue */
+  padding: 15px 25px; /* Adjusted padding */
+  color: white;
+  display: flex;
+  flex-wrap: wrap; /* Allow header items to wrap on small screens */
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.App-header h1 {
+  margin: 0;
+  font-size: 1.8em; /* Slightly larger */
+}
+
+.App-header .connection-status {
+  font-size: 0.8em;
+  padding: 5px 10px;
+  background-color: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  margin-left: auto; /* Push to right, or center on small screens */
+  margin-right: 15px; /* Space before leave button */
+}
+
+.App-header button { /* Leave Room button */
+  background-color: #ff4d4f; /* Red for leave */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.App-header button:hover {
+  background-color: #d9363e; /* Darker red on hover */
+}
+
+
+main {
+  flex-grow: 1; /* Allow main content to take available space */
+  padding: 20px;
+  width: 100%;
+  max-width: 1200px; /* Max width for content */
+  margin: 0 auto; /* Center content */
+}
+
+/* Generic input and button styles, can be overridden by component styles */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  padding: 10px;
+  margin: 8px 0; /* Consistent margin */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1em;
+  width: 100%; /* Default to full width, can be overridden */
+  max-width: 400px; /* Prevent inputs from becoming too wide */
+}
+
+button {
+  padding: 10px 18px; /* Slightly more padding */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+  font-size: 1em;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+hr {
+  margin: 30px 0;
+  border: 0;
+  border-top: 1px solid #e0e0e0; /* Lighter hr */
+}
+
+/* Headings */
+h2, h3, h4 {
+  color: #003366; /* Match header blue for consistency */
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
+}
+
+
+/* Loading App state */
+.loading-app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2em;
+  color: #555;
+}
+.loading-app p {
+  margin: 5px;
+}
+
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .App-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .App-header h1 {
+    margin-bottom: 10px;
+    font-size: 1.6em;
+  }
+  .App-header .connection-status {
+    margin-left: 0;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+  }
+  .App-header button { /* Leave Room button */
+    width: 100%;
+  }
+  main {
+    padding: 15px;
+  }
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 0.95em; /* Slightly smaller on mobile for more space */
+  }
+  button {
+    padding: 12px 15px; /* Larger tap targets */
+  }
+}
+
+@media (max-width: 480px) {
+  .App-header h1 {
+    font-size: 1.4em;
+  }
+  main {
+    padding: 10px;
+  }
+}

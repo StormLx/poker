@@ -1,0 +1,131 @@
+.voting-area {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.voting-area h4 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.voting-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center; /* Center cards in the container */
+}
+
+.voting-card {
+  padding: 10px 15px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1.1em;
+  min-width: 50px; /* Ensure cards have some width */
+  text-align: center;
+  cursor: default; /* Default cursor as they are disabled */
+}
+
+.voting-card:disabled {
+  background-color: #e9ecef; /* Standard disabled background */
+  color: #6c757d; /* Standard disabled text color */
+  cursor: not-allowed;
+}
+
+.creator-actions {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px dashed #007bff; /* Dashed border to signify creator only section */
+}
+
+.creator-actions h4 {
+  color: #007bff; /* Match border color */
+  margin-bottom: 15px;
+}
+
+.scale-update-message {
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.scale-update-message.success {
+  background-color: #d4edda; /* Bootstrap success green */
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.scale-update-message.error {
+  background-color: #f8d7da; /* Bootstrap danger red */
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.room-meta-info {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.voting-progress {
+  font-size: 1em;
+  color: #333;
+  background-color: #e9ecef;
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.creator-controls {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.creator-controls button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 1em;
+}
+
+
+.creator-settings { /* Renamed from .creator-actions for clarity */
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px dashed #007bff; /* Dashed border to signify creator only section */
+}
+
+.creator-settings h4 { /* Renamed from .creator-actions h4 */
+  color: #007bff; /* Match border color */
+  margin-bottom: 15px;
+}
+
+.vote-status-message {
+  margin-top: 10px;
+  font-style: italic;
+  color: #007bff;
+  text-align: center;
+}
+
+.action-message { /* For messages like 'vote submitted', 'failed to reveal' etc. */
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 500;
+}
+.action-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.action-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}

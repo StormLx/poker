@@ -1,0 +1,101 @@
+.participant-list-container {
+  margin-top: 15px;
+}
+
+.participant-list-container h4 {
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.no-participants-message {
+  color: #777;
+  font-style: italic;
+}
+
+.participant-ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.participant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s;
+}
+
+.participant-item.current-user {
+  border-left: 4px solid #007bff; /* Blue border for current user */
+}
+
+.participant-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.participant-name strong { /* (You) */
+  color: #007bff;
+  font-weight: bold;
+}
+
+.participant-name em { /* (Creator) */
+  color: #28a745; /* Green for creator */
+  font-style: normal;
+  font-weight: bold;
+}
+
+.participant-vote-info {
+  display: flex;
+  align-items: center;
+}
+
+.vote-status, .vote-value {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.vote-status.voted {
+  background-color: #d1ecf1; /* Light blue for 'Voted' status */
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.vote-status.pending {
+  background-color: #fff3cd; /* Light yellow for 'Pending' */
+  color: #856404;
+  border: 1px solid #ffeeba;
+  font-style: italic;
+}
+
+.vote-value.revealed {
+  background-color: #28a745; /* Green for revealed votes */
+  color: white;
+  font-weight: bold;
+  min-width: 30px; /* Give some width to the vote bubble */
+  text-align: center;
+}
+
+.vote-value.live, .vote-value.live-own {
+  background-color: #6c757d; /* Grey for live votes (creator view or own vote) */
+  color: white;
+  font-weight: bold;
+  min-width: 30px;
+  text-align: center;
+}
+
+/* Optional: Slightly different style if it's the current user's own live vote */
+.vote-value.live-own {
+  background-color: #5a6268;
+}
+
+.participant-item.has-voted {
+  /* Optional: could slightly change background if participant has voted but not revealed */
+  /* background-color: #f7f7f7; */
+}
