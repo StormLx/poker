@@ -5,6 +5,7 @@ const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:8080';
 console.log("Socket URL:", SOCKET_URL); // For debugging
 
 let socket = null;
+let isInitialConnectionAttempt = false; // Flag to differentiate initial connection from reconnections
 
 // Emitter for connection status changes
 const connectionStatusEmitter = {
@@ -35,23 +36,27 @@ export const connectSocket = () => {
     return;
   }
 
-  // If socket exists but is disconnected, ensure we clean up old listeners before creating new one
+  // If socket exists (even if disconnected), clean up old listeners before creating a new instance.
+  // This is important if connectSocket can be called multiple times after manual disconnects.
   if (socket) {
     socket.removeAllListeners();
+    socket.disconnect(); // Ensure the old socket is fully closed
   }
 
+  isInitialConnectionAttempt = true; // Set flag for new socket instance
   socket = io(SOCKET_URL, {
     transports: ['websocket'], // Explicitly use WebSocket
-    reconnectionAttempts: 5, // Default is Infinity, let's cap for testability
+    reconnectionAttempts: 5, // Default is Infinity, let's cap for testability // Socket.IO default is Infinity
     reconnectionDelay: 1000, // Default
     reconnectionDelayMax: 5000, // Default
     timeout: 20000, // Default
   });
 
-  connectionStatusEmitter.emit('connecting');
+  connectionStatusEmitter.emit('initial_connecting'); // Emit new status for initial connection attempt
 
   socket.on('connect', () => {
     console.log('Connected to WebSocket server id:', socket.id);
+    isInitialConnectionAttempt = false; // Clear flag on successful connection
     connectionStatusEmitter.emit('connect', socket.id);
   });
 
@@ -72,7 +77,16 @@ export const connectSocket = () => {
 
   socket.on('reconnect_attempt', (attemptNumber) => {
     console.log(`Reconnect attempt #${attemptNumber}`);
-    connectionStatusEmitter.emit('reconnecting', attemptNumber);
+    if (!isInitialConnectionAttempt) {
+      connectionStatusEmitter.emit('reconnecting', attemptNumber);
+    } else {
+      // During initial connection, retries are part of the initial attempt process.
+      // App.js can display "Connecting..." or "Retrying connection..."
+      // based on the persistent 'initial_connecting' or subsequent 'connect_error' statuses.
+      console.log(`Initial connection attempt ongoing (attempt #${attemptNumber}), not emitting 'reconnecting'.`);
+      // Optionally, emit a specific status for initial retries if App.js needs to differentiate:
+      // connectionStatusEmitter.emit('initial_connecting_retry', attemptNumber);
+    }
   });
 
   socket.on('reconnect', (attemptNumber) => {

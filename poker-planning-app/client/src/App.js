@@ -213,13 +213,20 @@ function App() {
     };
 
     const handleConnectionStatus = (status, data) => {
+        // Set the connection status state first. The text indicator will derive from this.
         setConnectionStatus(status);
         console.log("Connection Status Update:", status, data);
         const currentSocket = getSocketInstance();
 
-        if (status === 'connect') {
+        // Toasts and specific logic based on status
+        if (status === 'initial_connecting') {
+            // Text indicator will show "Connecting...". No toast needed for a normal, quick initial connection.
+            // If it fails, 'connect_error' or 'failed_to_connect' will trigger toasts.
+        } else if (status === 'connect') {
             setCurrentSocketId(currentSocket ? currentSocket.id : null);
             console.log("App.js: Connected with socket ID:", currentSocket ? currentSocket.id : 'N/A');
+            // Setup listeners only once on first successful connect or reconnect
+            // Note: setupEventListeners might need to be idempotent or handled carefully if socket can change.
             setupEventListeners(currentSocket);
 
             // URL room join logic / Rejoin logic
@@ -275,18 +282,28 @@ function App() {
         } else if (status === 'disconnect') {
             console.warn("App.js: Disconnected from server.");
             addToast('Disconnected. Attempting to reconnect...', 'warning');
+        } else if (status === 'reconnecting') {
+            // Text indicator shows "Reconnecting...". No toast needed here as it can be frequent.
+            // The 'disconnect' toast ("Disconnected. Attempting to reconnect...") serves as the initial alert.
         } else if (status === 'reconnect') {
             console.log("App.js: Reconnected. New Socket ID:", currentSocket ? currentSocket.id : 'N/A');
             addToast('Reconnected successfully!', 'success');
+             // It's possible event listeners need to be re-attached if the socket instance truly changed
+            // and `setupEventListeners` isn't run due to `status === 'connect'` condition not re-triggering.
+            // However, `socketService` reuses the same `socket` object on reconnects, so listeners should persist.
+            // If `connectSocket` was called again creating a new `socket` object, then `connect` would set them up.
         } else if (status === 'reconnect_failed' || status === 'failed_to_connect') {
-            // Using 'failed_to_connect' from socketService for both initial and reconnect failures
             addToast("Connection failed. Service might be unavailable. Please refresh later.", 'error');
-            setConnectionStatus('failed_to_connect'); // Ensure state reflects this specific status
-        } else if (status === 'connect_error' && !currentSocket?.connected) {
-            // If initial connection_error and not yet connected, this might also be a persistent failure.
-            // However, socket.io might try reconnecting. Let 'reconnect_failed' be the terminal state.
+            // setConnectionStatus('failed_to_connect'); // Already set at the start of function
+        } else if (status === 'connect_error') {
+            // This can happen during initial connection attempts or during reconnections if not handled by 'reconnecting'.
+            // The `isInitialConnectionAttempt` flag in socketService prevents 'reconnecting' log/emit during initial phase.
+            // So, this toast will be relevant for initial connection errors that are being retried.
             addToast(`Connection Error: ${data}. Retrying...`, 'warning');
         }
+        // Note: The actual state `connectionStatus` is set at the beginning of this function.
+        // The specific `setConnectionStatus('failed_to_connect')` call previously in the 'reconnect_failed'
+        // block is now covered by the initial `setConnectionStatus(status)`.
     };
 
     statusUnsubscribe = connectionStatusEmitter.subscribe(handleConnectionStatus);
@@ -336,16 +353,38 @@ function App() {
     };
   }, [currentView, roomState?.id, roomState?.userName, userName, connectionStatus]); // Added connectionStatus
 
-  let statusIndicatorText = `Status: ${connectionStatus}`;
-  if (connectionStatus === 'connect' && currentSocketId) statusIndicatorText = `Connected (${currentSocketId.substring(0,6)}...)`; // Shorten ID
-  if (connectionStatus === 'disconnect') statusIndicatorText = 'Disconnected. Retrying...';
-  if (connectionStatus === 'reconnecting') statusIndicatorText = 'Reconnecting...';
-  if (connectionStatus === 'failed_to_connect') statusIndicatorText = 'Connection Failed. Service Unavailable.';
+  let statusIndicatorText = `Status: ${connectionStatus}`; // Default text
 
+  if (connectionStatus === 'initial') {
+    statusIndicatorText = 'Status: Initializing...';
+  } else if (connectionStatus === 'initial_connecting') {
+    statusIndicatorText = 'Connecting...';
+  } else if (connectionStatus === 'connect' && currentSocketId) {
+    statusIndicatorText = `Connected (${currentSocketId.substring(0, 6)}...)`;
+  } else if (connectionStatus === 'disconnect') {
+    statusIndicatorText = 'Disconnected. Retrying...';
+  } else if (connectionStatus === 'reconnecting') {
+    statusIndicatorText = 'Reconnecting...';
+  } else if (connectionStatus === 'connect_error') {
+    // This text will show if connect_error is the latest status received.
+    // Useful during initial connection retries.
+    statusIndicatorText = 'Connection error. Retrying...';
+  } else if (connectionStatus === 'failed_to_connect') {
+    statusIndicatorText = 'Connection Failed. Service Unavailable.';
+  }
+  // `reconnect` status will quickly transition to `connect`, so `Connected` text will show.
+  // `status: initial` is when App.js just loaded, before connectSocket() in useEffect is invoked.
 
-  if (connectionStatus === 'initial' && !currentSocketId && !getSocketInstance()?.connected) {
+  // Loading screen for true initial state before any connection attempt is made by useEffect or if socket is null
+  if (connectionStatus === 'initial' && (!getSocketInstance() || !getSocketInstance().connected)) {
+     // Show a generic loading message if connectSocket hasn't effectively started
     return <div className="loading-app"><p>Loading Poker Planning App...</p><p>{statusIndicatorText}</p></div>;
   }
+  // If initial_connecting, also show loading screen
+  if (connectionStatus === 'initial_connecting') {
+    return <div className="loading-app"><p>{statusIndicatorText}</p></div>;
+  }
+
 
   const showAppContent = connectionStatus !== 'failed_to_connect';
 
