@@ -1,187 +1,199 @@
 .room-container {
-  padding: 15px;
-  background-color: var(--background-primary);
-  border-radius: 8px;
-  /* box-shadow is globally transitioned if applied */
+    padding: 15px;
+    background-color: var(--background-primary);
+    border-radius: 8px;
+    /* box-shadow is globally transitioned if applied */
 }
 
 .room-actions-bar {
-  display: flex;
-  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-  gap: 10px;
-  justify-content: center; /* Center buttons if they don't fill width */
-  margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    gap: 10px;
+    justify-content: center; /* Center buttons if they don't fill width */
+    margin-bottom: 20px;
 }
 
 .room-action-btn { /* Common class for buttons in this bar */
-  padding: 8px 15px; /* Slightly smaller padding for these action buttons */
-  font-size: 0.9em;
+    padding: 8px 15px; /* Slightly smaller padding for these action buttons */
+    font-size: 0.9em;
 }
 
 .spectator-toggle-btn {
-  /* margin-bottom: 15px; */ /* Now part of room-actions-bar, gap handles spacing */
-  background-color: var(--text-muted);
-  color: var(--background-primary);
+    /* margin-bottom: 15px; */ /* Now part of room-actions-bar, gap handles spacing */
+    background-color: var(--text-muted);
+    color: var(--background-primary);
 }
+
 .spectator-toggle-btn:hover {
-   filter: brightness(120%);
+    filter: brightness(120%);
 }
 
 .copy-link-btn {
-  background-color: var(--info-color);
-  color: var(--primary-text);
+    background-color: var(--info-color);
+    color: var(--primary-text);
 }
+
 body.dark-theme .copy-link-btn {
-  color: var(--info-text-on-bg);
+    color: var(--info-text-on-bg);
 }
+
 .copy-link-btn:hover {
-  filter: brightness(90%);
+    filter: brightness(90%);
 }
 
 .show-qr-btn {
-  background-color: var(--success-color); /* Or another distinct color like info or a custom one */
-  color: var(--primary-text);
+    background-color: var(--success-color); /* Or another distinct color like info or a custom one */
+    color: var(--primary-text);
 }
+
 body.dark-theme .show-qr-btn {
-  color: var(--success-text-on-bg);
+    color: var(--success-text-on-bg);
 }
+
 .show-qr-btn:hover {
-  filter: brightness(90%);
+    filter: brightness(90%);
 }
 
 
 .room-meta-info {
-  margin-bottom: 15px;
-  text-align: center;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 .voting-progress {
-  font-size: 1em;
-  color: var(--text-primary);
-  background-color: var(--background-tertiary);
-  padding: 8px 12px;
-  border-radius: 4px;
-  display: inline-block;
+    font-size: 1em;
+    color: var(--text-primary);
+    background-color: var(--background-tertiary);
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-block;
 }
 
 .spectator-indicator {
-  font-style: italic;
-  color: var(--text-muted);
-  font-weight: normal;
-  font-size: 0.9em;
-  margin-left: 5px;
+    font-style: italic;
+    color: var(--text-muted);
+    font-weight: normal;
+    font-size: 0.9em;
+    margin-left: 5px;
 }
 
 
 .spectator-message {
-  color: var(--text-muted);
-  font-style: italic;
-  margin-top: 10px;
-  text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 10px;
+    text-align: center;
 }
 
 
 .voting-area {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid var(--border-color);
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
 }
 
 .voting-area h4 { /* This is a h4 inside .voting-area */
-  margin-bottom: 10px;
-  color: var(--text-primary); /* Use theme text color */
+    margin-bottom: 10px;
+    color: var(--text-primary); /* Use theme text color */
 }
 
 .voting-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
 }
+
 /* Styles for .voting-card-item are in VotingCard.css */
 
 
 .creator-controls {
-  margin-top: 15px;
-  margin-bottom: 15px;
-  padding: 10px;
-  background-color: var(--background-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    text-align: center;
 }
 
 .creator-controls button {
-  margin: 5px;
-  padding: 10px 20px;
-  font-size: 1em;
-  /* Uses global button theming */
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+    /* Uses global button theming */
 }
 
 
 .creator-settings {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 2px dashed var(--primary-accent);
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed var(--primary-accent);
 }
 
 .creator-settings h4 {
-  color: var(--primary-accent);
-  margin-bottom: 15px;
+    color: var(--primary-accent);
+    margin-bottom: 15px;
 }
 
 .vote-status-message { /* "Your vote is cast! Waiting for others..." */
-  margin-top: 10px;
-  font-style: italic;
-  color: var(--primary-accent);
-  text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    color: var(--primary-accent);
+    text-align: center;
 }
 
 /* Action messages are now toasts, so these might be deprecated or repurposed if still used locally */
 .action-message {
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: 500;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
 }
+
 .action-message.success {
-  background-color: var(--success-color);
-  color: var(--primary-text); /* Default for light text on colored bg */
-  border: 1px solid var(--success-color);
+    background-color: var(--success-color);
+    color: var(--primary-text); /* Default for light text on colored bg */
+    border: 1px solid var(--success-color);
 }
+
 body.dark-theme .action-message.success { /* Specific text for dark theme success if needed */
-   color: var(--success-text-on-bg);
+    color: var(--success-text-on-bg);
 }
 
 .action-message.error {
-  background-color: var(--error-color);
-  color: var(--primary-text);
-  border: 1px solid var(--error-color);
+    background-color: var(--error-color);
+    color: var(--primary-text);
+    border: 1px solid var(--error-color);
 }
+
 body.dark-theme .action-message.error {
-   color: var(--error-text-on-bg);
+    color: var(--error-text-on-bg);
 }
 
 /* Responsive adjustments for room elements */
 @media (max-width: 768px) {
-  .room-container {
-    padding: 10px;
-  }
-  .voting-cards-container {
-    gap: 8px; /* Slightly smaller gap */
-  }
-  .creator-controls button, .spectator-toggle-btn {
-    padding: 10px 15px; /* Adjust padding for smaller screens */
-    font-size: 0.95em;
-  }
+    .room-container {
+        padding: 10px;
+    }
+
+    .voting-cards-container {
+        gap: 8px; /* Slightly smaller gap */
+    }
+
+    .creator-controls button, .spectator-toggle-btn {
+        padding: 10px 15px; /* Adjust padding for smaller screens */
+        font-size: 0.95em;
+    }
 }
 
 @media (max-width: 480px) {
-  .voting-progress {
-    font-size: 0.9em;
-  }
-  .voting-area h4 {
-    font-size: 1.1em;
-  }
+    .voting-progress {
+        font-size: 0.9em;
+    }
+
+    .voting-area h4 {
+        font-size: 1.1em;
+    }
 }

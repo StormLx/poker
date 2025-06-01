@@ -1,93 +1,93 @@
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html, body, #root {
-  height: 100%;
+    height: 100%;
 }
 
 /* Light Theme (Default) */
 :root {
-  --background-primary: #ffffff;
-  --background-secondary: #f0f2f5; /* Adjusted from #f0f0f0 to match App.css */
-  --background-tertiary: #e9ecef; /* For cards, inputs - Adjusted from #e0e0e0 */
-  --text-primary: #212529;
-  --text-secondary: #495057;
-  --text-muted: #6c757d;
-  --border-color: #ced4da;
-  --primary-accent: #007bff;
-  --primary-accent-hover: #0056b3;
-  --primary-text: #ffffff; /* Text on primary accent */
-  --error-color: #dc3545;
-  --error-text-on-bg: #721c24; /* For text on light error bg like toasts */
-  --success-color: #28a745;
-  --success-text-on-bg: #155724; /* For text on light success bg */
-  --warning-color: #ffc107;
-  --warning-text-on-bg: #856408; /* For text on light warning bg */
-  --info-color: #17a2b8;
-  --info-text-on-bg: #0c5460; /* For text on light info bg */
+    --background-primary: #ffffff;
+    --background-secondary: #f0f2f5; /* Adjusted from #f0f0f0 to match App.css */
+    --background-tertiary: #e9ecef; /* For cards, inputs - Adjusted from #e0e0e0 */
+    --text-primary: #212529;
+    --text-secondary: #495057;
+    --text-muted: #6c757d;
+    --border-color: #ced4da;
+    --primary-accent: #007bff;
+    --primary-accent-hover: #0056b3;
+    --primary-text: #ffffff; /* Text on primary accent */
+    --error-color: #dc3545;
+    --error-text-on-bg: #721c24; /* For text on light error bg like toasts */
+    --success-color: #28a745;
+    --success-text-on-bg: #155724; /* For text on light success bg */
+    --warning-color: #ffc107;
+    --warning-text-on-bg: #856408; /* For text on light warning bg */
+    --info-color: #17a2b8;
+    --info-text-on-bg: #0c5460; /* For text on light info bg */
 
 
-  /* Component-specific vars if needed */
-  --card-background: var(--background-secondary);
-  --card-border: var(--border-color);
-  --button-background: var(--primary-accent);
-  --button-text: var(--primary-text);
-  --button-hover-background: var(--primary-accent-hover);
-  --input-background: var(--background-primary);
-  --input-border: var(--border-color);
-  --link-color: var(--primary-accent);
+    /* Component-specific vars if needed */
+    --card-background: var(--background-secondary);
+    --card-border: var(--border-color);
+    --button-background: var(--primary-accent);
+    --button-text: var(--primary-text);
+    --button-hover-background: var(--primary-accent-hover);
+    --input-background: var(--background-primary);
+    --input-border: var(--border-color);
+    --link-color: var(--primary-accent);
 
-  /* Transitions */
-  --theme-transition-duration: 0.2s; /* Faster transition */
+    /* Transitions */
+    --theme-transition-duration: 0.2s; /* Faster transition */
 }
 
 /* Dark Theme */
 body.dark-theme { /* Apply to body or a top-level app div */
-  --background-primary: #121212; /* Even darker for main bg */
-  --background-secondary: #1e1e1e; /* Dark gray for cards/sections */
-  --background-tertiary: #2c2c2c; /* For inputs, slightly lighter than secondary */
-  --text-primary: #e0e0e0;
-  --text-secondary: #b0b0b0;
-  --text-muted: #888888;
-  --border-color: #444444;
-  --primary-accent: #0d6efd;
-  --primary-accent-hover: #0a58ca;
-  --primary-text: #ffffff;
-  /* For dark theme, toast text is usually light, so main color is for background */
-  --error-color: #cf6679; /* Material Design dark theme error color */
-  --error-text-on-bg: #000000; /* Text on this error bg */
-  --success-color: #66bb6a; /* Material Design dark theme success color */
-  --success-text-on-bg: #000000;
-  --warning-color: #ffa726;
-  --warning-text-on-bg: #000000;
-  --info-color: #42a5f5;
-  --info-text-on-bg: #000000;
+    --background-primary: #121212; /* Even darker for main bg */
+    --background-secondary: #1e1e1e; /* Dark gray for cards/sections */
+    --background-tertiary: #2c2c2c; /* For inputs, slightly lighter than secondary */
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #888888;
+    --border-color: #444444;
+    --primary-accent: #0d6efd;
+    --primary-accent-hover: #0a58ca;
+    --primary-text: #ffffff;
+    /* For dark theme, toast text is usually light, so main color is for background */
+    --error-color: #cf6679; /* Material Design dark theme error color */
+    --error-text-on-bg: #000000; /* Text on this error bg */
+    --success-color: #66bb6a; /* Material Design dark theme success color */
+    --success-text-on-bg: #000000;
+    --warning-color: #ffa726;
+    --warning-text-on-bg: #000000;
+    --info-color: #42a5f5;
+    --info-text-on-bg: #000000;
 
-  --card-background: var(--background-secondary);
-  --card-border: var(--border-color);
-  --button-background: var(--primary-accent);
-  --button-text: var(--primary-text);
-  --button-hover-background: var(--primary-accent-hover);
-  --input-background: var(--background-tertiary);
-  --input-border: var(--border-color);
-  --link-color: #60a5fa;
+    --card-background: var(--background-secondary);
+    --card-border: var(--border-color);
+    --button-background: var(--primary-accent);
+    --button-text: var(--primary-text);
+    --button-hover-background: var(--primary-accent-hover);
+    --input-background: var(--background-tertiary);
+    --input-border: var(--border-color);
+    --link-color: #60a5fa;
 }
 
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-primary); /* Apply theme background */
-  color: var(--text-primary); /* Apply theme text color */
-  transition: background-color var(--theme-transition-duration) ease,
-              color var(--theme-transition-duration) ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--background-primary); /* Apply theme background */
+    color: var(--text-primary); /* Apply theme text color */
+    transition: background-color var(--theme-transition-duration) ease,
+    color var(--theme-transition-duration) ease;
 }
 
 
@@ -96,18 +96,18 @@ body {
 button, input, select, textarea, .toast,
 .participant-item, .voting-card-item, .statistics-container,
 .voting-scale-selector, .App-header, .room-container {
-  transition: background-color var(--theme-transition-duration) ease,
-              color var(--theme-transition-duration) ease,
-              border-color var(--theme-transition-duration) ease,
-              box-shadow var(--theme-transition-duration) ease; /* include box-shadow for buttons etc */
+    transition: background-color var(--theme-transition-duration) ease,
+    color var(--theme-transition-duration) ease,
+    border-color var(--theme-transition-duration) ease,
+    box-shadow var(--theme-transition-duration) ease; /* include box-shadow for buttons etc */
 }
 
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-  background-color: var(--background-tertiary);
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  color: var(--text-secondary);
+    background-color: var(--background-tertiary);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    color: var(--text-secondary);
 }

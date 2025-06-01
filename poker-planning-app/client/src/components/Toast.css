@@ -1,105 +1,110 @@
 .toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000; /* Ensure it's above other content */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000; /* Ensure it's above other content */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .toast {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-width: 250px;
-  max-width: 350px;
-  padding: 12px 18px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  /* color: #fff; // Will be set by type */
-  font-size: 0.95em;
-  animation: toast-slide-in 0.3s ease-out;
-  /* Transition for theme changes on toast itself, if any style other than bg/color is changed */
-  /* transition: background-color var(--theme-transition-duration) ease, color var(--theme-transition-duration) ease; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 250px;
+    max-width: 350px;
+    padding: 12px 18px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    /* color: #fff; // Will be set by type */
+    font-size: 0.95em;
+    animation: toast-slide-in 0.3s ease-out;
+    /* Transition for theme changes on toast itself, if any style other than bg/color is changed */
+    /* transition: background-color var(--theme-transition-duration) ease, color var(--theme-transition-duration) ease; */
 }
 
 .toast-success {
-  background-color: var(--success-color);
-  color: var(--primary-text); /* Default for light text on darkish bg */
+    background-color: var(--success-color);
+    color: var(--primary-text); /* Default for light text on darkish bg */
 }
+
 body.dark-theme .toast-success {
-  color: var(--success-text-on-bg); /* Specific text for dark theme */
+    color: var(--success-text-on-bg); /* Specific text for dark theme */
 }
 
 .toast-error {
-  background-color: var(--error-color);
-  color: var(--primary-text);
+    background-color: var(--error-color);
+    color: var(--primary-text);
 }
+
 body.dark-theme .toast-error {
-  color: var(--error-text-on-bg);
+    color: var(--error-text-on-bg);
 }
 
 .toast-info {
-  background-color: var(--info-color);
-  color: var(--primary-text);
+    background-color: var(--info-color);
+    color: var(--primary-text);
 }
+
 body.dark-theme .toast-info {
-  color: var(--info-text-on-bg);
+    color: var(--info-text-on-bg);
 }
 
 .toast-warning {
-  background-color: var(--warning-color);
-  color: var(--warning-text-on-bg); /* Usually dark text on yellow */
+    background-color: var(--warning-color);
+    color: var(--warning-text-on-bg); /* Usually dark text on yellow */
 }
+
 /* No specific dark theme for warning text as it's already contrasting */
 
 
 .toast-message {
-  flex-grow: 1;
-  margin-right: 10px;
+    flex-grow: 1;
+    margin-right: 10px;
 }
 
 .toast-close-btn {
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 1.4em;
-  font-weight: bold;
-  line-height: 1;
-  opacity: 0.8;
-  cursor: pointer;
-  padding: 0 5px;
-  /* transition property is on .toast globally */
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.4em;
+    font-weight: bold;
+    line-height: 1;
+    opacity: 0.8;
+    cursor: pointer;
+    padding: 0 5px;
+    /* transition property is on .toast globally */
 }
 
 .toast-close-btn:hover {
-  opacity: 1;
-  filter: brightness(120%); /* Make it slightly brighter on hover */
+    opacity: 1;
+    filter: brightness(120%); /* Make it slightly brighter on hover */
 }
 
 /* Animation for toast entry */
 @keyframes toast-slide-in {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 /* Responsive adjustments for toast container */
 @media (max-width: 480px) {
-  .toast-container {
-    top: 10px;
-    right: 10px;
-    left: 10px; /* Allow toasts to take more width on small screens */
-    align-items: center; /* Center toasts */
-  }
-  .toast {
-    width: 100%;
-    max-width: none; /* Allow full width */
-  }
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px; /* Allow toasts to take more width on small screens */
+        align-items: center; /* Center toasts */
+    }
+
+    .toast {
+        width: 100%;
+        max-width: none; /* Allow full width */
+    }
 }

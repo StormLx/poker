@@ -1,122 +1,125 @@
 .participant-list-container {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
 .participant-list-container h4 {
-  margin-bottom: 8px;
-  color: var(--text-secondary); /* Themed */
+    margin-bottom: 8px;
+    color: var(--text-secondary); /* Themed */
 }
 
 .no-participants-message {
-  color: var(--text-muted); /* Themed */
-  font-style: italic;
+    color: var(--text-muted); /* Themed */
+    font-style: italic;
 }
 
 .participant-ul {
-  list-style-type: none;
-  padding: 0;
+    list-style-type: none;
+    padding: 0;
 }
 
 .participant-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-  background-color: var(--background-primary); /* Themed */
-  border: 1px solid var(--border-color); /* Themed */
-  border-radius: 6px;
-  margin-bottom: 8px;
-  /* transition is global now */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background-color: var(--background-primary); /* Themed */
+    border: 1px solid var(--border-color); /* Themed */
+    border-radius: 6px;
+    margin-bottom: 8px;
+    /* transition is global now */
 }
 
 .participant-item.current-user {
-  border-left: 4px solid var(--primary-accent); /* Themed */
+    border-left: 4px solid var(--primary-accent); /* Themed */
 }
 
 .participant-name {
-  font-weight: 500;
-  color: var(--text-primary); /* Themed */
+    font-weight: 500;
+    color: var(--text-primary); /* Themed */
 }
 
 .participant-name strong { /* (You) */
-  color: var(--primary-accent); /* Themed */
-  font-weight: bold;
+    color: var(--primary-accent); /* Themed */
+    font-weight: bold;
 }
 
 .participant-name em { /* (Creator) */
-  color: var(--success-color); /* Themed */
-  font-style: normal;
-  font-weight: bold;
+    color: var(--success-color); /* Themed */
+    font-style: normal;
+    font-weight: bold;
 }
 
 .participant-vote-info {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .vote-status, .vote-value {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.9em;
-  font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 500;
 }
 
 .vote-status.voted {
-  background-color: var(--info-color); /* Themed */
-  color: var(--primary-text); /* Assuming info bg is dark enough for light text */
-  border: 1px solid var(--info-color);
+    background-color: var(--info-color); /* Themed */
+    color: var(--primary-text); /* Assuming info bg is dark enough for light text */
+    border: 1px solid var(--info-color);
 }
+
 body.dark-theme .vote-status.voted {
-  color: var(--info-text-on-bg);
+    color: var(--info-text-on-bg);
 }
 
 
 .vote-status.pending {
-  background-color: var(--background-tertiary); /* Themed for pending bg */
-  color: var(--text-muted); /* Themed for pending text */
-  border: 1px solid var(--border-color);
-  font-style: italic;
+    background-color: var(--background-tertiary); /* Themed for pending bg */
+    color: var(--text-muted); /* Themed for pending text */
+    border: 1px solid var(--border-color);
+    font-style: italic;
 }
 
 .vote-value.revealed {
-  background-color: var(--success-color); /* Themed */
-  color: var(--primary-text);
-  font-weight: bold;
-  min-width: 30px;
-  text-align: center;
+    background-color: var(--success-color); /* Themed */
+    color: var(--primary-text);
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
 }
+
 body.dark-theme .vote-value.revealed {
-  color: var(--success-text-on-bg);
+    color: var(--success-text-on-bg);
 }
 
 .vote-value.live, .vote-value.live-own {
-  background-color: var(--text-muted); /* Themed */
-  color: var(--background-primary); /* Ensure contrast */
-  font-weight: bold;
-  min-width: 30px;
-  text-align: center;
+    background-color: var(--text-muted); /* Themed */
+    color: var(--background-primary); /* Ensure contrast */
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
 }
 
 .vote-value.live-own {
-  filter: brightness(90%); /* Slightly different for own vote vs others' live votes */
+    filter: brightness(90%); /* Slightly different for own vote vs others' live votes */
 }
 
 .participant-item.has-voted {
-  /* background-color: var(--background-secondary); /* Example if needed */
+    /* background-color: var(--background-secondary); /* Example if needed */
 }
 
 .participant-item.spectator {
-  background-color: var(--background-tertiary); /* Themed */
-  opacity: 0.7; /* Adjusted opacity */
+    background-color: var(--background-tertiary); /* Themed */
+    opacity: 0.7; /* Adjusted opacity */
 }
+
 .participant-item.spectator .participant-name {
-  color: var(--text-muted);
+    color: var(--text-muted);
 }
 
 
 .spectator-tag {
-  font-style: italic;
-  color: var(--text-muted); /* Themed */
-  margin-left: 5px;
-  font-size: 0.9em;
+    font-style: italic;
+    color: var(--text-muted); /* Themed */
+    margin-left: 5px;
+    font-size: 0.9em;
 }

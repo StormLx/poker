@@ -9,98 +9,98 @@ let isInitialConnectionAttempt = false; // Flag to differentiate initial connect
 
 // Emitter for connection status changes
 const connectionStatusEmitter = {
-  _listeners: [],
-  subscribe(listener) {
-    this._listeners.push(listener);
-    // Optionally, immediately notify with current status if socket exists
-    if (socket) {
-      listener(socket.connected ? 'connect' : 'disconnect'); // Simplified initial status
-    } else {
-      listener('initial'); // Before io() is called
+    _listeners: [],
+    subscribe(listener) {
+        this._listeners.push(listener);
+        // Optionally, immediately notify with current status if socket exists
+        if (socket) {
+            listener(socket.connected ? 'connect' : 'disconnect'); // Simplified initial status
+        } else {
+            listener('initial'); // Before io() is called
+        }
+    },
+    unsubscribe(listener) {
+        this._listeners = this._listeners.filter(l => l !== listener);
+    },
+    emit(status, data) {
+        this._listeners.forEach(listener => listener(status, data));
     }
-  },
-  unsubscribe(listener) {
-    this._listeners = this._listeners.filter(l => l !== listener);
-  },
-  emit(status, data) {
-    this._listeners.forEach(listener => listener(status, data));
-  }
 };
 
 export const getSocketInstance = () => socket;
 
 export const connectSocket = () => {
-  if (socket && socket.connected) {
-    console.log('Socket already connected.');
-    connectionStatusEmitter.emit('connect', socket.id); // Re-emit for any new listeners
-    return;
-  }
-
-  // If socket exists (even if disconnected), clean up old listeners before creating a new instance.
-  // This is important if connectSocket can be called multiple times after manual disconnects.
-  if (socket) {
-    socket.removeAllListeners();
-    socket.disconnect(); // Ensure the old socket is fully closed
-  }
-
-  isInitialConnectionAttempt = true; // Set flag for new socket instance
-  socket = io(SOCKET_URL, {
-    transports: ['websocket'], // Explicitly use WebSocket
-    reconnectionAttempts: 5, // Default is Infinity, let's cap for testability // Socket.IO default is Infinity
-    reconnectionDelay: 1000, // Default
-    reconnectionDelayMax: 5000, // Default
-    timeout: 20000, // Default
-  });
-
-  connectionStatusEmitter.emit('initial_connecting'); // Emit new status for initial connection attempt
-
-  socket.on('connect', () => {
-    console.log('Connected to WebSocket server id:', socket.id);
-    isInitialConnectionAttempt = false; // Clear flag on successful connection
-    connectionStatusEmitter.emit('connect', socket.id);
-  });
-
-  socket.on('disconnect', (reason) => {
-    console.log('Disconnected from WebSocket server:', reason);
-    connectionStatusEmitter.emit('disconnect', reason);
-    // If the disconnection was initiated by the server (e.g., auth failure), then reconnection might not be desired or possible.
-    // Socket.IO handles "server shutting down" disconnects by attempting to reconnect unless `socket.disconnect()` was called client-side.
-  });
-
-  socket.on('connect_error', (err) => {
-    console.error('Connection error with WebSocket server:', err.message);
-    // If it's a one-off error before initial connection, it might lead to reconnect attempts.
-    // If reconnection attempts are exhausted, 'reconnect_failed' will handle the persistent failure state.
-    connectionStatusEmitter.emit('connect_error', err.message);
-    // Consider if this should immediately go to 'failed_to_connect' if no retries are configured for initial
-  });
-
-  socket.on('reconnect_attempt', (attemptNumber) => {
-    console.log(`Reconnect attempt #${attemptNumber}`);
-    if (!isInitialConnectionAttempt) {
-      connectionStatusEmitter.emit('reconnecting', attemptNumber);
-    } else {
-      // During initial connection, retries are part of the initial attempt process.
-      // App.js can display "Connecting..." or "Retrying connection..."
-      // based on the persistent 'initial_connecting' or subsequent 'connect_error' statuses.
-      console.log(`Initial connection attempt ongoing (attempt #${attemptNumber}), not emitting 'reconnecting'.`);
-      // Optionally, emit a specific status for initial retries if App.js needs to differentiate:
-      // connectionStatusEmitter.emit('initial_connecting_retry', attemptNumber);
+    if (socket && socket.connected) {
+        console.log('Socket already connected.');
+        connectionStatusEmitter.emit('connect', socket.id); // Re-emit for any new listeners
+        return;
     }
-  });
 
-  socket.on('reconnect', (attemptNumber) => {
-    console.log(`Reconnected successfully after ${attemptNumber} attempts. New socket ID: ${socket.id}`);
-    connectionStatusEmitter.emit('reconnect', socket.id);
-  });
+    // If socket exists (even if disconnected), clean up old listeners before creating a new instance.
+    // This is important if connectSocket can be called multiple times after manual disconnects.
+    if (socket) {
+        socket.removeAllListeners();
+        socket.disconnect(); // Ensure the old socket is fully closed
+    }
 
-  socket.on('reconnect_failed', () => {
-    console.error('Failed to reconnect to the WebSocket server after multiple attempts.');
-    connectionStatusEmitter.emit('failed_to_connect', 'Reconnect failed'); // Use a more generic status
-  });
+    isInitialConnectionAttempt = true; // Set flag for new socket instance
+    socket = io(SOCKET_URL, {
+        transports: ['websocket'], // Explicitly use WebSocket
+        reconnectionAttempts: 5, // Default is Infinity, let's cap for testability // Socket.IO default is Infinity
+        reconnectionDelay: 1000, // Default
+        reconnectionDelayMax: 5000, // Default
+        timeout: 20000, // Default
+    });
 
-  // Expose the emitter for App.js to subscribe to
-  return connectionStatusEmitter;
+    connectionStatusEmitter.emit('initial_connecting'); // Emit new status for initial connection attempt
+
+    socket.on('connect', () => {
+        console.log('Connected to WebSocket server id:', socket.id);
+        isInitialConnectionAttempt = false; // Clear flag on successful connection
+        connectionStatusEmitter.emit('connect', socket.id);
+    });
+
+    socket.on('disconnect', (reason) => {
+        console.log('Disconnected from WebSocket server:', reason);
+        connectionStatusEmitter.emit('disconnect', reason);
+        // If the disconnection was initiated by the server (e.g., auth failure), then reconnection might not be desired or possible.
+        // Socket.IO handles "server shutting down" disconnects by attempting to reconnect unless `socket.disconnect()` was called client-side.
+    });
+
+    socket.on('connect_error', (err) => {
+        console.error('Connection error with WebSocket server:', err.message);
+        // If it's a one-off error before initial connection, it might lead to reconnect attempts.
+        // If reconnection attempts are exhausted, 'reconnect_failed' will handle the persistent failure state.
+        connectionStatusEmitter.emit('connect_error', err.message);
+        // Consider if this should immediately go to 'failed_to_connect' if no retries are configured for initial
+    });
+
+    socket.on('reconnect_attempt', (attemptNumber) => {
+        console.log(`Reconnect attempt #${attemptNumber}`);
+        if (!isInitialConnectionAttempt) {
+            connectionStatusEmitter.emit('reconnecting', attemptNumber);
+        } else {
+            // During initial connection, retries are part of the initial attempt process.
+            // App.js can display "Connecting..." or "Retrying connection..."
+            // based on the persistent 'initial_connecting' or subsequent 'connect_error' statuses.
+            console.log(`Initial connection attempt ongoing (attempt #${attemptNumber}), not emitting 'reconnecting'.`);
+            // Optionally, emit a specific status for initial retries if App.js needs to differentiate:
+            // connectionStatusEmitter.emit('initial_connecting_retry', attemptNumber);
+        }
+    });
+
+    socket.on('reconnect', (attemptNumber) => {
+        console.log(`Reconnected successfully after ${attemptNumber} attempts. New socket ID: ${socket.id}`);
+        connectionStatusEmitter.emit('reconnect', socket.id);
+    });
+
+    socket.on('reconnect_failed', () => {
+        console.error('Failed to reconnect to the WebSocket server after multiple attempts.');
+        connectionStatusEmitter.emit('failed_to_connect', 'Reconnect failed'); // Use a more generic status
+    });
+
+    // Expose the emitter for App.js to subscribe to
+    return connectionStatusEmitter;
 };
 
 // Ensure existing functions use the lazily initialized socket
@@ -117,26 +117,26 @@ export const connectSocket = () => {
 // The functions below will use the `socket` variable from the outer scope.
 
 export const createRoom = (userName, votingScaleConfig, callback) => {
-  if (!socket) return callback({ success: false, message: "Socket not connected." });
-  console.log(`Emitting createRoom with userName: ${userName}`);
-  socket.emit('createRoom', { creatorName: userName, votingScaleConfig }, callback);
+    if (!socket) return callback({success: false, message: "Socket not connected."});
+    console.log(`Emitting createRoom with userName: ${userName}`);
+    socket.emit('createRoom', {creatorName: userName, votingScaleConfig}, callback);
 };
 
 export const joinRoom = (roomId, userName, callback) => {
-  if (!socket) return callback({ success: false, message: "Socket not connected." });
-  console.log(`Emitting joinRoom with roomId: ${roomId}, userName: ${userName}`);
-  socket.emit('joinRoom', { roomId, userName }, callback);
+    if (!socket) return callback({success: false, message: "Socket not connected."});
+    console.log(`Emitting joinRoom with roomId: ${roomId}, userName: ${userName}`);
+    socket.emit('joinRoom', {roomId, userName}, callback);
 };
 
 // Listeners for events from the server - these should also check if socket exists.
 // It's better if the calling component (App.js) only sets up listeners after connectSocket()
 // has successfully established a connection and socket instance.
 const setupListener = (eventName, callback) => {
-  if (socket) {
-    socket.on(eventName, callback);
-  } else {
-    console.warn(`Attempted to set listener for ${eventName} before socket was initialized.`);
-  }
+    if (socket) {
+        socket.on(eventName, callback);
+    } else {
+        console.warn(`Attempted to set listener for ${eventName} before socket was initialized.`);
+    }
 };
 
 export const onRoomCreated = (callback) => setupListener('roomCreated', callback); // Note: createRoom uses callback now
@@ -154,33 +154,33 @@ export const onParticipantUpdated = (callback) => setupListener('participantUpda
 
 
 export const toggleSpectatorMode = (callback) => {
-  if (!socket) return callback({ success: false, message: "Socket not connected."});
-  console.log("Emitting toggleSpectatorMode");
-  socket.emit('toggleSpectatorMode', {}, callback);
+    if (!socket) return callback({success: false, message: "Socket not connected."});
+    console.log("Emitting toggleSpectatorMode");
+    socket.emit('toggleSpectatorMode', {}, callback);
 };
 
 export const updateVotingScale = (newScaleConfig, callback) => {
-  if (!socket) return callback({ success: false, message: "Socket not connected." });
-  console.log(`Emitting updateVotingScale with newScaleConfig:`, newScaleConfig);
-  socket.emit('updateVotingScale', { newScaleConfig }, callback);
+    if (!socket) return callback({success: false, message: "Socket not connected."});
+    console.log(`Emitting updateVotingScale with newScaleConfig:`, newScaleConfig);
+    socket.emit('updateVotingScale', {newScaleConfig}, callback);
 };
 
 export const submitVote = (voteValue, callback) => {
-  if (!socket) return callback({ success: false, message: "Socket not connected." });
-  console.log(`Emitting submitVote with value: ${voteValue}`);
-  socket.emit('submitVote', { voteValue }, callback);
+    if (!socket) return callback({success: false, message: "Socket not connected."});
+    console.log(`Emitting submitVote with value: ${voteValue}`);
+    socket.emit('submitVote', {voteValue}, callback);
 };
 
 export const revealVotes = (callback) => {
-  if (!socket) return callback({ success: false, message: "Socket not connected." });
-  console.log(`Emitting revealVotes`);
-  socket.emit('revealVotes', {}, callback);
+    if (!socket) return callback({success: false, message: "Socket not connected."});
+    console.log(`Emitting revealVotes`);
+    socket.emit('revealVotes', {}, callback);
 };
 
 export const resetVoting = (callback) => {
-  if (!socket) return callback({ success: false, message: "Socket not connected." });
-  console.log(`Emitting resetVoting`);
-  socket.emit('resetVoting', {}, callback);
+    if (!socket) return callback({success: false, message: "Socket not connected."});
+    console.log(`Emitting resetVoting`);
+    socket.emit('resetVoting', {}, callback);
 };
 
 

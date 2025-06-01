@@ -1,75 +1,79 @@
 .qr-code-modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent backdrop */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050; /* Ensure it's above other content, but below highest modals if any */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent backdrop */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ensure it's above other content, but below highest modals if any */
 }
 
 .qr-code-modal-content {
-  background-color: var(--background-primary);
-  padding: 25px 30px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  color: var(--text-primary);
-  max-width: 90%; /* Ensure it doesn't exceed screen width on small devices */
-  width: auto;   /* Adjust width based on content */
+    background-color: var(--background-primary);
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: var(--text-primary);
+    max-width: 90%; /* Ensure it doesn't exceed screen width on small devices */
+    width: auto; /* Adjust width based on content */
 }
 
 .qr-code-modal-content h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: var(--primary-accent);
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--primary-accent);
 }
 
 .qr-code-wrapper {
-  margin: 20px auto; /* Center the QR code */
-  background-color: white; /* QR code usually needs a white background for good contrast */
-  padding: 15px;
-  display: inline-block; /* To wrap tightly around QR code with padding */
-  border-radius: 4px; /* Optional: if you want rounded corners for the white bg part */
+    margin: 20px auto; /* Center the QR code */
+    background-color: white; /* QR code usually needs a white background for good contrast */
+    padding: 15px;
+    display: inline-block; /* To wrap tightly around QR code with padding */
+    border-radius: 4px; /* Optional: if you want rounded corners for the white bg part */
 }
+
 /* qrcode.react generates an svg or canvas, this wrapper helps ensure its background if needed */
 
 .qr-room-link {
-  margin-top: 15px;
-  margin-bottom: 20px;
-  font-size: 0.9em;
-  color: var(--text-secondary);
-  word-break: break-all; /* Ensure long links wrap */
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    word-break: break-all; /* Ensure long links wrap */
 }
 
 .close-qr-btn {
-  background-color: var(--primary-accent);
-  color: var(--primary-text);
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  /* Uses global button styling, but can be overridden if needed */
+    background-color: var(--primary-accent);
+    color: var(--primary-text);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    /* Uses global button styling, but can be overridden if needed */
 }
 
 .close-qr-btn:hover {
-  background-color: var(--primary-accent-hover);
+    background-color: var(--primary-accent-hover);
 }
 
 /* Responsive adjustments for the QR code modal */
 @media (max-width: 480px) {
-  .qr-code-modal-content {
-    padding: 20px;
-  }
-  .qr-code-modal-content h3 {
-    font-size: 1.3em;
-  }
-  /* Ensure QRCode itself might resize if library supports it or by adjusting size prop in JS */
-  .qr-code-wrapper {
-    padding: 10px;
-  }
-  /* The QRCode component's 'size' prop is the primary way to control its dimensions */
+    .qr-code-modal-content {
+        padding: 20px;
+    }
+
+    .qr-code-modal-content h3 {
+        font-size: 1.3em;
+    }
+
+    /* Ensure QRCode itself might resize if library supports it or by adjusting size prop in JS */
+    .qr-code-wrapper {
+        padding: 10px;
+    }
+
+    /* The QRCode component's 'size' prop is the primary way to control its dimensions */
 }

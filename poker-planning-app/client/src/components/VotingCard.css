@@ -1,126 +1,131 @@
 .voting-card-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 70px;
-  height: 100px;
-  border: 2px solid var(--primary-accent);
-  border-radius: 8px;
-  background-color: var(--background-primary); /* Card background */
-  color: var(--text-primary); /* Card text color */
-  cursor: pointer;
-  /* transition is global now */
-  position: relative;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  user-select: none;
-  perspective: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 100px;
+    border: 2px solid var(--primary-accent);
+    border-radius: 8px;
+    background-color: var(--background-primary); /* Card background */
+    color: var(--text-primary); /* Card text color */
+    cursor: pointer;
+    /* transition is global now */
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    user-select: none;
+    perspective: 1000px;
 }
 
 .voting-card-item .card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  /* transition: transform 0.6s; // Only if true flip is implemented */
-  transform-style: preserve-3d;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    /* transition: transform 0.6s; // Only if true flip is implemented */
+    transform-style: preserve-3d;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* No actual flip for now, visual changes handle reveal state */
 
 .voting-card-item:hover:not(.disabled-opaque):not(.disabled-revealed) {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  border-color: var(--primary-accent-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-accent-hover);
 }
 
 .voting-card-item.selected {
-  background-color: var(--primary-accent);
-  color: var(--primary-text); /* Text on selected card */
-  border-color: var(--primary-accent-hover);
-  /* box-shadow: 0 0 10px var(--primary-accent); /* Glow, consider theme variable */
+    background-color: var(--primary-accent);
+    color: var(--primary-text); /* Text on selected card */
+    border-color: var(--primary-accent-hover);
+    /* box-shadow: 0 0 10px var(--primary-accent); /* Glow, consider theme variable */
 }
+
 body.dark-theme .voting-card-item.selected {
-  /* box-shadow: 0 0 12px var(--primary-accent); */
+    /* box-shadow: 0 0 12px var(--primary-accent); */
 }
 
 
 .voting-card-item.disabled-opaque {
-  cursor: not-allowed;
-  opacity: 0.6;
-  background-color: var(--background-tertiary);
-  border-color: var(--border-color);
-  color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: var(--background-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-muted);
 }
 
 .voting-card-item.disabled-revealed {
-  cursor: default;
-  background-color: var(--background-secondary);
-  border-color: var(--border-color);
-  color: var(--text-muted);
+    cursor: default;
+    background-color: var(--background-secondary);
+    border-color: var(--border-color);
+    color: var(--text-muted);
 }
 
 .voting-card-item.disabled-revealed.selected,
 .voting-card-item.revealed-selected {
-  background-color: var(--success-color);
-  color: var(--primary-text); /* Assuming success color is dark enough for light text */
-  border-color: var(--success-color); /* Darken success color slightly for border */
+    background-color: var(--success-color);
+    color: var(--primary-text); /* Assuming success color is dark enough for light text */
+    border-color: var(--success-color); /* Darken success color slightly for border */
 }
+
 body.dark-theme .voting-card-item.revealed-selected {
     color: var(--success-text-on-bg); /* Specific text for dark theme success */
 }
 
 
 .card-value {
-  font-size: 1.8em;
-  font-weight: bold;
-  /* color is inherited from .voting-card-item or overridden by .selected/.revealed-selected etc. */
+    font-size: 1.8em;
+    font-weight: bold;
+    /* color is inherited from .voting-card-item or overridden by .selected/.revealed-selected etc. */
 }
 
 .vote-count {
-  position: absolute;
-  top: 5px;
-  right: 8px;
-  background-color: var(--error-color); /* Count badge background */
-  color: var(--primary-text); /* Text on count badge */
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9em;
-  font-weight: bold;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  z-index: 1;
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    background-color: var(--error-color); /* Count badge background */
+    color: var(--primary-text); /* Text on count badge */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    z-index: 1;
 }
 
 /* Vote count badge on selected/revealed cards */
 .voting-card-item.selected .vote-count {
-  background-color: var(--background-primary); /* Invert colors for visibility */
-  color: var(--primary-accent);
+    background-color: var(--background-primary); /* Invert colors for visibility */
+    color: var(--primary-accent);
 }
+
 .voting-card-item.selected .card-value { /* Ensure card value color is correct */
-  color: var(--primary-text);
+    color: var(--primary-text);
 }
 
 
 .voting-card-item.revealed-selected .vote-count {
-  background-color: var(--background-primary);
-  color: var(--success-color);
+    background-color: var(--background-primary);
+    color: var(--success-color);
 }
+
 .voting-card-item.revealed-selected .card-value {
-  color: var(--primary-text); /* Use theme variable for text on success bg */
+    color: var(--primary-text); /* Use theme variable for text on success bg */
 }
+
 body.dark-theme .voting-card-item.revealed-selected .card-value {
     color: var(--success-text-on-bg);
 }
 
 
 .voting-card-item.disabled-revealed .card-value {
-  color: var(--text-muted);
+    color: var(--text-muted);
 }

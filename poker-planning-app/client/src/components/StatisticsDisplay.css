@@ -1,101 +1,102 @@
 .statistics-container {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: var(--background-secondary); /* Themed */
-  border: 1px solid var(--border-color); /* Themed */
-  border-radius: 8px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: var(--background-secondary); /* Themed */
+    border: 1px solid var(--border-color); /* Themed */
+    border-radius: 8px;
 }
 
 .statistics-container h3 { /* This is an h3 */
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: var(--primary-accent); /* Themed - same as other h3s in App.css */
-  text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--primary-accent); /* Themed - same as other h3s in App.css */
+    text-align: center;
 }
 
 .stats-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid var(--border-color); /* Themed */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color); /* Themed */
 }
 
 .stats-summary p {
-  margin: 5px 0;
-  font-size: 0.95em;
-  background-color: var(--background-primary); /* Themed */
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border-color); /* Themed */
-  color: var(--text-primary); /* Themed */
+    margin: 5px 0;
+    font-size: 0.95em;
+    background-color: var(--background-primary); /* Themed */
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color); /* Themed */
+    color: var(--text-primary); /* Themed */
 }
 
 .stats-summary p strong {
-  color: var(--primary-accent); /* Themed */
+    color: var(--primary-accent); /* Themed */
 }
 
 .statistics-container h4 { /* This is an h4 */
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: var(--primary-accent); /* Themed */
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: var(--primary-accent); /* Themed */
 }
 
 .vote-distribution-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .vote-bar-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .vote-value-label {
-  flex-basis: 80px;
-  text-align: right;
-  font-weight: bold;
-  color: var(--text-secondary); /* Themed */
+    flex-basis: 80px;
+    text-align: right;
+    font-weight: bold;
+    color: var(--text-secondary); /* Themed */
 }
 
 .vote-bar-wrapper {
-  flex-grow: 1;
-  background-color: var(--background-tertiary); /* Themed */
-  border-radius: 4px;
-  height: 25px;
-  display: flex;
+    flex-grow: 1;
+    background-color: var(--background-tertiary); /* Themed */
+    border-radius: 4px;
+    height: 25px;
+    display: flex;
 }
 
 .vote-bar {
-  background-color: var(--primary-accent); /* Themed */
-  color: var(--primary-text); /* Themed */
-  height: 100%;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 8px;
-  white-space: nowrap;
-  transition: width 0.5s ease-in-out;
-  min-width: 20px;
+    background-color: var(--primary-accent); /* Themed */
+    color: var(--primary-text); /* Themed */
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    white-space: nowrap;
+    transition: width 0.5s ease-in-out;
+    min-width: 20px;
 }
 
 .vote-count-in-bar {
-  font-size: 0.9em;
-  font-weight: bold;
-  /* Color is inherited from .vote-bar */
+    font-size: 0.9em;
+    font-weight: bold;
+    /* Color is inherited from .vote-bar */
 }
 
 /* Responsive adjustments for smaller screens if necessary */
 @media (max-width: 600px) {
-  .stats-summary {
-    grid-template-columns: 1fr; /* Stack summary items on small screens */
-  }
-  .vote-value-label {
-    flex-basis: 60px; /* Slightly smaller label width */
-    font-size: 0.9em;
-  }
+    .stats-summary {
+        grid-template-columns: 1fr; /* Stack summary items on small screens */
+    }
+
+    .vote-value-label {
+        flex-basis: 60px; /* Slightly smaller label width */
+        font-size: 0.9em;
+    }
 }
