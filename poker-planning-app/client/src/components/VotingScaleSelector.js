@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { VOTING_PRESETS, MAX_VOTING_OPTIONS, DEFAULT_VOTING_SCALE_CONFIG } from '../constants';
 import './VotingScaleSelector.css';
 
 function VotingScaleSelector({ currentScaleConfig, onScaleChange, disabled = false }) {
+  const debounceTimeoutId = useRef(null);
   const [scaleType, setScaleType] = useState(DEFAULT_VOTING_SCALE_CONFIG.type);
   const [presetName, setPresetName] = useState(DEFAULT_VOTING_SCALE_CONFIG.name);
   const [customValues, setCustomValues] = useState('');
@@ -57,22 +58,26 @@ function VotingScaleSelector({ currentScaleConfig, onScaleChange, disabled = fal
   };
 
   const triggerScaleChange = (type, value) => {
-    let newConfig = {};
-    if (type === 'preset') {
-      newConfig = { type: 'preset', name: value };
-      // Optionally resolve to values here if needed for immediate feedback, but backend does this
-      // newConfig.values = VOTING_PRESETS[value]?.values;
-    } else { // custom
-      const parsedValues = validateAndParseCustomValues(value);
-      if (parsedValues) { // Only trigger change if valid or empty string (to clear)
-        newConfig = { type: 'custom', values: parsedValues };
-      } else {
-        // If validation fails, don't call onScaleChange, or call with error/null
-        // For now, we just show error and don't update parent
-        return;
+    clearTimeout(debounceTimeoutId.current);
+
+    debounceTimeoutId.current = setTimeout(() => {
+      let newConfig = {};
+      if (type === 'preset') {
+        newConfig = { type: 'preset', name: value };
+        // Optionally resolve to values here if needed for immediate feedback, but backend does this
+        // newConfig.values = VOTING_PRESETS[value]?.values;
+      } else { // custom
+        const parsedValues = validateAndParseCustomValues(value);
+        if (parsedValues) { // Only trigger change if valid or empty string (to clear)
+          newConfig = { type: 'custom', values: parsedValues };
+        } else {
+          // If validation fails, don't call onScaleChange, or call with error/null
+          // For now, we just show error and don't update parent
+          return;
+        }
       }
-    }
-    onScaleChange(newConfig);
+      onScaleChange(newConfig);
+    }, 500); // 500ms debounce delay
   };
 
 

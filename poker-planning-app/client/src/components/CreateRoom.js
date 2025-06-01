@@ -30,7 +30,7 @@ function CreateRoom({ onRoomCreated, addToast = alert }) {
     createRoom(userName.trim(), finalScaleConfig, (response) => {
       setIsLoading(false);
       if (response.success) {
-        // addToast(`Room "${response.room.id}" created successfully!`, 'success'); // App.js can show this on view change
+        addToast(`Room "${response.room.id}" created successfully!`, 'success');
         console.log('Room created successfully:', response);
         onRoomCreated(response.room, userName.trim(), true);
       } else {
