@@ -292,4 +292,3 @@ function Room({ roomData, userName, isCreator, isSpectator: currentUserIsSpectat
 }
 
 export default Room;
-```
