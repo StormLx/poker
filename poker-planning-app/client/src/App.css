@@ -2,9 +2,9 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f0f2f5; /* Slightly lighter grey */
-  color: #333;
-  line-height: 1.6; /* Improved readability */
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  line-height: 1.6;
 }
 
 .App {
@@ -23,33 +23,57 @@ body {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  color: var(--primary-text); /* Use variable for header text */
+  background-color: var(--primary-accent); /* Use variable for header bg */
 }
+/* Ensure App-header specific colors transition too */
+.App-header {
+    transition: background-color var(--theme-transition-duration) ease;
+}
+
 
 .App-header h1 {
   margin: 0;
-  font-size: 1.8em; /* Slightly larger */
+  font-size: 1.8em;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space between control items */
 }
 
 .App-header .connection-status {
   font-size: 0.8em;
   padding: 5px 10px;
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255,255,255,0.15); /* Slightly more visible */
   border-radius: 4px;
-  margin-left: auto; /* Push to right, or center on small screens */
-  margin-right: 15px; /* Space before leave button */
+  /* margin-left: auto; removed to use gap in header-controls */
+  /* Uses primary-text from App-header for its text color */
 }
 
-.App-header button { /* Leave Room button */
-  background-color: #ff4d4f; /* Red for leave */
-  color: white;
+.theme-toggle-btn,
+.leave-room-btn {
   border: none;
   padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  /* transition is already applied by global button styles in index.css */
+  color: var(--primary-text);
 }
-.App-header button:hover {
-  background-color: #d9363e; /* Darker red on hover */
+
+.theme-toggle-btn {
+  background-color: var(--info-color);
+}
+.theme-toggle-btn:hover {
+  filter: brightness(90%); /* General hover effect for colored buttons */
+}
+
+.leave-room-btn {
+  background-color: var(--error-color);
+}
+.leave-room-btn:hover {
+  filter: brightness(90%);
 }
 
 
@@ -67,35 +91,39 @@ input[type="number"],
 select,
 textarea {
   padding: 10px;
-  margin: 8px 0; /* Consistent margin */
-  border: 1px solid #ccc;
+  margin: 8px 0;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-background);
+  color: var(--text-primary);
   border-radius: 4px;
   box-sizing: border-box;
   font-size: 1em;
-  width: 100%; /* Default to full width, can be overridden */
-  max-width: 400px; /* Prevent inputs from becoming too wide */
+  width: 100%;
+  max-width: 400px;
 }
 
+/* General button styling - App wide */
 button {
-  padding: 10px 18px; /* Slightly more padding */
-  background-color: #007bff;
-  color: white;
+  padding: 10px 18px;
+  background-color: var(--button-background);
+  color: var(--button-text);
   border: none;
   border-radius: 4px;
   cursor: pointer;
   margin: 5px;
   font-size: 1em;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  /* transition already applied globally */
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 button:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: var(--button-hover-background);
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 
 button:disabled {
-  background-color: #cccccc;
+  background-color: var(--text-muted); /* Use a theme variable for disabled bg */
+  color: var(--background-secondary); /* Muted text on disabled button */
   cursor: not-allowed;
   box-shadow: none;
 }
@@ -103,12 +131,12 @@ button:disabled {
 hr {
   margin: 30px 0;
   border: 0;
-  border-top: 1px solid #e0e0e0; /* Lighter hr */
+  border-top: 1px solid var(--border-color);
 }
 
 /* Headings */
 h2, h3, h4 {
-  color: #003366; /* Match header blue for consistency */
+  color: var(--primary-accent); /* Use primary accent for headings */
   margin-top: 1.5em;
   margin-bottom: 0.8em;
 }
@@ -122,10 +150,72 @@ h2, h3, h4 {
   align-items: center;
   height: 100vh;
   font-size: 1.2em;
-  color: #555;
+  color: var(--text-secondary);
 }
 .loading-app p {
   margin: 5px;
+}
+
+.connection-error-fullscreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  height: 100%; /* Take full height of main if possible */
+}
+.connection-error-fullscreen h2 {
+  color: var(--error-color);
+  font-size: 1.8em;
+}
+.connection-error-fullscreen p {
+  color: var(--text-secondary);
+  margin-bottom: 15px;
+  max-width: 500px;
+}
+.connection-error-fullscreen button {
+  background-color: var(--primary-accent);
+  color: var(--primary-text);
+}
+
+.room-load-error {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+.room-load-error p {
+  margin-bottom: 10px;
+}
+
+
+/* Connection Status Indicator Variants */
+.connection-status {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+  color: var(--primary-text); /* Default text on header background */
+}
+.status-connect, .status-reconnect {
+  background-color: var(--success-color) !important; /* Use !important if specificity is an issue */
+  color: var(--primary-text) !important;
+}
+body.dark-theme .status-connect, body.dark-theme .status-reconnect {
+    color: var(--success-text-on-bg) !important;
+}
+
+.status-disconnect, .status-reconnecting {
+  background-color: var(--warning-color) !important;
+  color: var(--warning-text-on-bg) !important; /* Ensure contrast on yellow */
+}
+
+.status-failed_to_connect, .status-connect_error {
+  background-color: var(--error-color) !important;
+  color: var(--primary-text) !important;
+}
+body.dark-theme .status-failed_to_connect, body.dark-theme .status-connect_error {
+    color: var(--error-text-on-bg) !important;
 }
 
 
@@ -133,20 +223,26 @@ h2, h3, h4 {
 @media (max-width: 768px) {
   .App-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch; /* Make items take full width */
   }
   .App-header h1 {
     margin-bottom: 10px;
     font-size: 1.6em;
+    text-align: center; /* Center title on small screens */
+  }
+  .header-controls {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
   }
   .App-header .connection-status {
-    margin-left: 0;
-    margin-bottom: 10px;
-    width: 100%;
     text-align: center;
+    width: auto; /* Adjust width as needed or remove for full width */
+    margin-bottom: 0; /* Remove bottom margin if stacked */
   }
-  .App-header button { /* Leave Room button */
-    width: 100%;
+  .theme-toggle-btn,
+  .leave-room-btn {
+    width: 100%; /* Make buttons full width */
   }
   main {
     padding: 15px;

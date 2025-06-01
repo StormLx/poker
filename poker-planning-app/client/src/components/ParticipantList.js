@@ -37,11 +37,12 @@ function ParticipantList({
           }
 
           return (
-            <li key={p.id} className={`participant-item ${p.hasVoted ? 'has-voted' : ''} ${isCurrentUser ? 'current-user' : ''}`}>
+            <li key={p.id} className={`participant-item ${p.hasVoted ? 'has-voted' : ''} ${isCurrentUser ? 'current-user' : ''} ${p.isSpectator ? 'spectator' : ''}`}>
               <span className="participant-name">
                 {p.name}
                 {isCurrentUser && <strong> (You)</strong>}
                 {isRoomCreator && <em> (Creator)</em>}
+                {p.isSpectator && <span className="spectator-tag"> (Spectator)</span>}
               </span>
               <span className="participant-vote-info">
                 {voteDisplay}

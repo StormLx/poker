@@ -1,15 +1,15 @@
 .statistics-container {
   margin-top: 20px;
   padding: 20px;
-  background-color: #f8f9fa; /* Light grey background */
-  border: 1px solid #dee2e6; /* Light border */
+  background-color: var(--background-secondary); /* Themed */
+  border: 1px solid var(--border-color); /* Themed */
   border-radius: 8px;
 }
 
-.statistics-container h3 {
+.statistics-container h3 { /* This is an h3 */
   margin-top: 0;
   margin-bottom: 15px;
-  color: #343a40; /* Dark grey text */
+  color: var(--primary-accent); /* Themed - same as other h3s in App.css */
   text-align: center;
 }
 
@@ -19,26 +19,27 @@
   gap: 10px;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-color); /* Themed */
 }
 
 .stats-summary p {
   margin: 5px 0;
   font-size: 0.95em;
-  background-color: #fff;
+  background-color: var(--background-primary); /* Themed */
   padding: 8px;
   border-radius: 4px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color); /* Themed */
+  color: var(--text-primary); /* Themed */
 }
 
 .stats-summary p strong {
-  color: #007bff; /* Primary blue for labels */
+  color: var(--primary-accent); /* Themed */
 }
 
-.statistics-container h4 {
+.statistics-container h4 { /* This is an h4 */
   margin-top: 20px;
   margin-bottom: 10px;
-  color: #495057; /* Medium grey */
+  color: var(--primary-accent); /* Themed */
 }
 
 .vote-distribution-chart {
@@ -54,37 +55,38 @@
 }
 
 .vote-value-label {
-  flex-basis: 80px; /* Fixed width for vote labels (e.g., '5', 'XL') */
+  flex-basis: 80px;
   text-align: right;
   font-weight: bold;
-  color: #555;
+  color: var(--text-secondary); /* Themed */
 }
 
 .vote-bar-wrapper {
   flex-grow: 1;
-  background-color: #e9ecef; /* Light background for the bar track */
+  background-color: var(--background-tertiary); /* Themed */
   border-radius: 4px;
-  height: 25px; /* Height of the bar track */
-  display: flex; /* To align the actual bar */
+  height: 25px;
+  display: flex;
 }
 
 .vote-bar {
-  background-color: #007bff; /* Blue for the bar */
-  color: white;
-  height: 100%; /* Fill the wrapper height */
+  background-color: var(--primary-accent); /* Themed */
+  color: var(--primary-text); /* Themed */
+  height: 100%;
   border-radius: 4px;
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Text at the end of the bar */
-  padding-right: 8px; /* Padding for text inside bar */
+  justify-content: flex-end;
+  padding-right: 8px;
   white-space: nowrap;
-  transition: width 0.5s ease-in-out; /* Animate bar width changes */
-  min-width: 20px; /* So that very small bars are still visible with text */
+  transition: width 0.5s ease-in-out;
+  min-width: 20px;
 }
 
 .vote-count-in-bar {
   font-size: 0.9em;
   font-weight: bold;
+  /* Color is inherited from .vote-bar */
 }
 
 /* Responsive adjustments for smaller screens if necessary */

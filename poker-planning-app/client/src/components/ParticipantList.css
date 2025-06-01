@@ -4,11 +4,11 @@
 
 .participant-list-container h4 {
   margin-bottom: 8px;
-  color: #444;
+  color: var(--text-secondary); /* Themed */
 }
 
 .no-participants-message {
-  color: #777;
+  color: var(--text-muted); /* Themed */
   font-style: italic;
 }
 
@@ -22,29 +22,29 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
+  background-color: var(--background-primary); /* Themed */
+  border: 1px solid var(--border-color); /* Themed */
   border-radius: 6px;
   margin-bottom: 8px;
-  transition: background-color 0.2s;
+  /* transition is global now */
 }
 
 .participant-item.current-user {
-  border-left: 4px solid #007bff; /* Blue border for current user */
+  border-left: 4px solid var(--primary-accent); /* Themed */
 }
 
 .participant-name {
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary); /* Themed */
 }
 
 .participant-name strong { /* (You) */
-  color: #007bff;
+  color: var(--primary-accent); /* Themed */
   font-weight: bold;
 }
 
 .participant-name em { /* (Creator) */
-  color: #28a745; /* Green for creator */
+  color: var(--success-color); /* Themed */
   font-style: normal;
   font-weight: bold;
 }
@@ -62,40 +62,61 @@
 }
 
 .vote-status.voted {
-  background-color: #d1ecf1; /* Light blue for 'Voted' status */
-  color: #0c5460;
-  border: 1px solid #bee5eb;
+  background-color: var(--info-color); /* Themed */
+  color: var(--primary-text); /* Assuming info bg is dark enough for light text */
+  border: 1px solid var(--info-color);
+}
+body.dark-theme .vote-status.voted {
+  color: var(--info-text-on-bg);
 }
 
+
 .vote-status.pending {
-  background-color: #fff3cd; /* Light yellow for 'Pending' */
-  color: #856404;
-  border: 1px solid #ffeeba;
+  background-color: var(--background-tertiary); /* Themed for pending bg */
+  color: var(--text-muted); /* Themed for pending text */
+  border: 1px solid var(--border-color);
   font-style: italic;
 }
 
 .vote-value.revealed {
-  background-color: #28a745; /* Green for revealed votes */
-  color: white;
+  background-color: var(--success-color); /* Themed */
+  color: var(--primary-text);
   font-weight: bold;
-  min-width: 30px; /* Give some width to the vote bubble */
+  min-width: 30px;
   text-align: center;
+}
+body.dark-theme .vote-value.revealed {
+  color: var(--success-text-on-bg);
 }
 
 .vote-value.live, .vote-value.live-own {
-  background-color: #6c757d; /* Grey for live votes (creator view or own vote) */
-  color: white;
+  background-color: var(--text-muted); /* Themed */
+  color: var(--background-primary); /* Ensure contrast */
   font-weight: bold;
   min-width: 30px;
   text-align: center;
 }
 
-/* Optional: Slightly different style if it's the current user's own live vote */
 .vote-value.live-own {
-  background-color: #5a6268;
+  filter: brightness(90%); /* Slightly different for own vote vs others' live votes */
 }
 
 .participant-item.has-voted {
-  /* Optional: could slightly change background if participant has voted but not revealed */
-  /* background-color: #f7f7f7; */
+  /* background-color: var(--background-secondary); /* Example if needed */
+}
+
+.participant-item.spectator {
+  background-color: var(--background-tertiary); /* Themed */
+  opacity: 0.7; /* Adjusted opacity */
+}
+.participant-item.spectator .participant-name {
+  color: var(--text-muted);
+}
+
+
+.spectator-tag {
+  font-style: italic;
+  color: var(--text-muted); /* Themed */
+  margin-left: 5px;
+  font-size: 0.9em;
 }

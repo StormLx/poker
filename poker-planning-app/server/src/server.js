@@ -12,7 +12,7 @@ const io = new Server(server, {
   }
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080; // Use environment variable
 
 // Store which room a socket is in for easier lookup on disconnect
 const socketRoomMap = {};
@@ -194,8 +194,41 @@ io.on('connection', (socket) => {
     console.log(`Voting reset for room ${roomId}. Notifying clients.`);
     callback({ success: true });
   });
+
+  socket.on('toggleSpectatorMode', (payload, callback) => { // payload can be empty
+    const roomId = Array.from(socket.rooms).find(r => r !== socket.id);
+    if (!roomId) {
+      console.error(`toggleSpectatorMode: Socket ${socket.id} not in a room.`);
+      if (callback) callback({ success: false, message: 'Not in a room.' });
+      return;
+    }
+
+    console.log(`toggleSpectatorMode event from ${socket.id} for room ${roomId}`);
+    const result = roomManager.toggleSpectatorMode(roomId, socket.id);
+
+    if (result.error) {
+      console.error(`toggleSpectatorMode failed for ${socket.id} in room ${roomId}: ${result.error}`);
+      if (callback) callback({ success: false, message: result.error });
+      return;
+    }
+
+    // Notify all clients in the room about the participant update
+    // This includes the change in isSpectator, and also if their vote was cleared.
+    io.to(roomId).emit('participantUpdated', { participant: result.participant });
+
+    // Also, if the participant became a spectator and votes were reset,
+    // the general 'participantVoted' event might be useful to update UI showing who has voted.
+    // However, 'participantUpdated' should be enough if client logic correctly updates based on the full participant object.
+    // If spectator mode change also affects overall voting counts (e.g. a spectator's vote is removed),
+    // then a more general room update might be needed or client recalculates.
+    // For now, 'participantUpdated' is the primary notification.
+
+    console.log(`User ${result.participant.name} (${socket.id}) spectator mode is now ${result.participant.isSpectator}. Notifying room ${roomId}.`);
+    if (callback) callback({ success: true, isSpectator: result.participant.isSpectator, participant: result.participant });
+  });
 });
 
-server.listen(PORT, () => {
+// Ensure this uses the http server instance, not the express app
+server.listen(PORT, () => { // 'server' is the http.createServer instance
   console.log(`Server listening on port ${PORT}`);
 });

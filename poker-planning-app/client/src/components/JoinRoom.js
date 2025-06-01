@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import { joinRoom } from '../socketService';
 
 // Assume addToast is passed as a prop, or make it optional
@@ -6,6 +6,15 @@ function JoinRoom({ onJoinedRoom, addToast = alert }) {
   const [userName, setUserName] = useState('');
   const [roomId, setRoomId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const roomIdFromUrl = params.get('room');
+    if (roomIdFromUrl) {
+      setRoomId(roomIdFromUrl);
+      addToast(`Joining room "${roomIdFromUrl}" from link. Enter your name.`, 'info');
+    }
+  }, [addToast]); // addToast in dependency array if its identity can change, though unlikely for alert fallback
 
   const handleJoinRoom = () => {
     if (!userName.trim() || !roomId.trim()) {

@@ -17,27 +17,43 @@
   padding: 12px 18px;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  color: #fff;
+  /* color: #fff; // Will be set by type */
   font-size: 0.95em;
   animation: toast-slide-in 0.3s ease-out;
+  /* Transition for theme changes on toast itself, if any style other than bg/color is changed */
+  /* transition: background-color var(--theme-transition-duration) ease, color var(--theme-transition-duration) ease; */
 }
 
 .toast-success {
-  background-color: #28a745; /* Green */
+  background-color: var(--success-color);
+  color: var(--primary-text); /* Default for light text on darkish bg */
+}
+body.dark-theme .toast-success {
+  color: var(--success-text-on-bg); /* Specific text for dark theme */
 }
 
 .toast-error {
-  background-color: #dc3545; /* Red */
+  background-color: var(--error-color);
+  color: var(--primary-text);
+}
+body.dark-theme .toast-error {
+  color: var(--error-text-on-bg);
 }
 
 .toast-info {
-  background-color: #17a2b8; /* Blue */
+  background-color: var(--info-color);
+  color: var(--primary-text);
+}
+body.dark-theme .toast-info {
+  color: var(--info-text-on-bg);
 }
 
 .toast-warning {
-  background-color: #ffc107; /* Yellow */
-  color: #212529; /* Dark text for yellow bg */
+  background-color: var(--warning-color);
+  color: var(--warning-text-on-bg); /* Usually dark text on yellow */
 }
+/* No specific dark theme for warning text as it's already contrasting */
+
 
 .toast-message {
   flex-grow: 1;
@@ -47,17 +63,19 @@
 .toast-close-btn {
   background: none;
   border: none;
-  color: inherit; /* Inherit color from parent (.toast-*) */
+  color: inherit;
   font-size: 1.4em;
   font-weight: bold;
   line-height: 1;
   opacity: 0.8;
   cursor: pointer;
   padding: 0 5px;
+  /* transition property is on .toast globally */
 }
 
 .toast-close-btn:hover {
   opacity: 1;
+  filter: brightness(120%); /* Make it slightly brighter on hover */
 }
 
 /* Animation for toast entry */

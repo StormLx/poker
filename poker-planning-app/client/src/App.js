@@ -10,14 +10,13 @@ import {
   onParticipantVotedRealTime,
   onVotesRevealed,
   onVotingReset,
-  connectionStatusEmitter, // Import the emitter
-  getSocketInstance, // To get socket ID
-  joinRoom as socketJoinRoom, // For rejoining
-  // Ensure other necessary imports like onParticipantJoined, onParticipantLeft are here if used directly in App.js
-  // For now, assuming they are handled within Room.js or indirectly.
+  onParticipantUpdated, // New
+  connectionStatusEmitter,
+  getSocketInstance,
+  joinRoom as socketJoinRoom,
 } from './socketService';
 import { DEFAULT_VOTING_SCALE_CONFIG } from './constants';
-import { ToastContainer } from './components/Toast'; // Import ToastContainer
+import { ToastContainer } from './components/Toast';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -26,7 +25,42 @@ function App() {
   const [isCreator, setIsCreator] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('initial');
   const [currentSocketId, setCurrentSocketId] = useState(null);
-  const [toasts, setToasts] = useState([]); // For toast notifications
+  const [toasts, setToasts] = useState([]);
+  const [isSpectator, setIsSpectator] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) return storedTheme;
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // Listen to OS theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      const storedTheme = localStorage.getItem('theme'); // Check if user made a manual choice
+      if (!storedTheme) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
 
   const addToast = (message, type = 'info') => {
     const id = Date.now();
@@ -51,12 +85,14 @@ function App() {
       votingScaleConfig: roomDataResponse.votingScaleConfig || DEFAULT_VOTING_SCALE_CONFIG,
       votesRevealed: roomDataResponse.votesRevealed || false,
       statistics: roomDataResponse.statistics || null,
-      creatorLiveVotes: {}, // Reset on new room entry/join
-      userName: nameOfUser, // Store userName within roomState for rejoin logic
+      creatorLiveVotes: {},
+      userName: nameOfUser,
     });
     setUserName(nameOfUser);
-    // setIsCreator(isUserCreatorFlag); // This might be stale if socket ID changed
+
+    const selfInRoom = roomDataResponse.participants.find(p => p.id === actualSocketId);
     setIsCreator(roomDataResponse.creatorId === actualSocketId);
+    setIsSpectator(selfInRoom ? selfInRoom.isSpectator : false); // Set spectator status for current user
 
     setCurrentView('room');
     sessionStorage.setItem('pokerRoomId', roomDataResponse.id);
@@ -122,6 +158,27 @@ function App() {
             console.log('EVENT: votingReset', { participants, votesRevealed, statistics });
             setRoomState(prev => prev ? { ...prev, participants, votesRevealed, statistics, creatorLiveVotes: {} } : null);
         });
+        // Handle participant updates (like spectator mode change)
+        onParticipantUpdated(({ participant: updatedParticipant }) => {
+            if (!updatedParticipant) return;
+            console.log('EVENT: participantUpdated', { updatedParticipant });
+            setRoomState(prev => {
+                if (!prev || !prev.participants) return prev;
+                // Create a new participants array with the updated participant
+                const newParticipants = prev.participants.map(p =>
+                    p.id === updatedParticipant.id ? { ...p, ...updatedParticipant } : p
+                );
+                // If the current user is the one updated, also update top-level isSpectator state
+                if (updatedParticipant.id === (getSocketInstance() ? getSocketInstance().id : null)) {
+                    setIsSpectator(updatedParticipant.isSpectator);
+                }
+                return { ...prev, participants: newParticipants };
+            });
+            // Avoid toast if it's the current user, Room.js will show feedback for their own toggle
+            if (updatedParticipant.id !== (getSocketInstance() ? getSocketInstance().id : null)) {
+                 addToast(`User ${updatedParticipant.name} ${updatedParticipant.isSpectator ? 'is now a spectator.' : 'is no longer a spectator.' }`, 'info');
+            }
+        });
     };
 
     const handleConnectionStatus = (status, data) => {
@@ -159,10 +216,14 @@ function App() {
         } else if (status === 'reconnect') {
             console.log("App.js: Reconnected. New Socket ID:", currentSocket ? currentSocket.id : 'N/A');
             addToast('Reconnected successfully!', 'success');
-        } else if (status === 'reconnect_failed') {
-            addToast("Failed to reconnect after multiple attempts. Please refresh.", 'error');
-        } else if (status === 'connect_error') {
-            addToast(`Connection Error: ${data}. Please check server.`, 'error');
+        } else if (status === 'reconnect_failed' || status === 'failed_to_connect') {
+            // Using 'failed_to_connect' from socketService for both initial and reconnect failures
+            addToast("Connection failed. Service might be unavailable. Please refresh later.", 'error');
+            setConnectionStatus('failed_to_connect'); // Ensure state reflects this specific status
+        } else if (status === 'connect_error' && !currentSocket?.connected) {
+            // If initial connection_error and not yet connected, this might also be a persistent failure.
+            // However, socket.io might try reconnecting. Let 'reconnect_failed' be the terminal state.
+            addToast(`Connection Error: ${data}. Retrying...`, 'warning');
         }
     };
 
@@ -193,47 +254,69 @@ function App() {
         // then socket.off for specific listeners would be needed here.
         // For now, socketService.js handles re-creating socket or re-attaching its own internal listeners.
     };
-  }, [currentView, roomState?.id, roomState?.userName, userName]); // Dependencies for rejoin logic & listener setup
+  }, [currentView, roomState?.id, roomState?.userName, userName, connectionStatus]); // Added connectionStatus
 
   let statusIndicatorText = `Status: ${connectionStatus}`;
-  if (connectionStatus === 'connect' && currentSocketId) statusIndicatorText = `Connected (${currentSocketId})`;
-  if (connectionStatus === 'disconnect') statusIndicatorText = 'Disconnected. Attempting to reconnect...';
+  if (connectionStatus === 'connect' && currentSocketId) statusIndicatorText = `Connected (${currentSocketId.substring(0,6)}...)`; // Shorten ID
+  if (connectionStatus === 'disconnect') statusIndicatorText = 'Disconnected. Retrying...';
   if (connectionStatus === 'reconnecting') statusIndicatorText = 'Reconnecting...';
-  if (connectionStatus === 'reconnect_failed') statusIndicatorText = 'Reconnection Failed. Please refresh.';
+  if (connectionStatus === 'failed_to_connect') statusIndicatorText = 'Connection Failed. Service Unavailable.';
 
-  if (connectionStatus === 'initial' && !currentSocketId) {
+
+  if (connectionStatus === 'initial' && !currentSocketId && !getSocketInstance()?.connected) {
     return <div className="loading-app"><p>Loading Poker Planning App...</p><p>{statusIndicatorText}</p></div>;
   }
+
+  const showAppContent = connectionStatus !== 'failed_to_connect';
 
   return (
     <div className="App">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       <header className="App-header">
         <h1>Poker Planning</h1>
-        <div className="connection-status">{statusIndicatorText}</div>
-        {currentView === 'room' && roomState && (
-          <button onClick={() => handleLeaveRoom()} style={{ float: 'right' }}>Leave Room</button>
-        )}
+        <div className="header-controls">
+          <div className={`connection-status status-${connectionStatus}`}>{statusIndicatorText}</div>
+          <button onClick={toggleTheme} className="theme-toggle-btn">
+            Switch to {theme === 'light' ? 'Dark' : 'Light'} Mode
+          </button>
+          {currentView === 'room' && roomState && (
+            <button onClick={() => handleLeaveRoom()} className="leave-room-btn">Leave Room</button>
+          )}
+        </div>
       </header>
       <main>
-        {currentView === 'home' ? (
+        {!showAppContent && (
+          <div className="connection-error-fullscreen">
+            <h2>Service Unavailable</h2>
+            <p>Unable to connect to the server. Please check your internet connection or try again later. </p>
+            <p>If the problem persists, the service might be temporarily down.</p>
+            <button onClick={() => window.location.reload()}>Try Reloading</button>
+          </div>
+        )}
+        {showAppContent && currentView === 'home' && (
           <>
             <CreateRoom onRoomCreated={handleRoomEntry} addToast={addToast} />
             <hr />
             <JoinRoom onJoinedRoom={handleRoomEntry} addToast={addToast} />
           </>
-        ) : currentView === 'room' && roomState ? (
+        )}
+        {showAppContent && currentView === 'room' && roomState && (
           <Room
             roomData={{...roomState, currentGlobalSocketId: currentSocketId }}
-            userName={userName} // Use App's direct userName state
-            isCreator={roomState.creatorId === currentSocketId}
+            userName={userName}
+            isCreator={isCreator}
+            isSpectator={isSpectator}
             currentRoomId={roomState.id}
-            addToast={addToast} // Pass addToast down
+            addToast={addToast}
           />
-        ) : (
-          <div>
-            <p>Loading room or an error occurred...</p>
-            <button onClick={() => { setCurrentView('home'); setRoomState(null); }}>Go to Home</button>
+        )}
+        {showAppContent && currentView === 'room' && !roomState && (
+           // This case could be if currentView is 'room' but roomState is null (e.g. failed rejoin after page load)
+           // Or, some other unexpected state. Default to showing a loading/error or redirecting to home.
+          <div className="room-load-error">
+            <p>Loading room data or an error occurred...</p>
+            <p>If you were disconnected, we're attempting to reconnect.</p>
+            <button onClick={() => { setCurrentView('home'); handleLeaveRoom(false); }}>Go to Home</button>
           </div>
         )}
       </main>
